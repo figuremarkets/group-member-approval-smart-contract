@@ -47,7 +47,7 @@ jobs:
         # env.GIT_DIFF is set to true when any schema file is different from the committed values
         run: |
           if ${{ env.GIT_DIFF }}; then
-            echo "Git diff showed schema not up to date"
+            echo "Git diff showed schema not up to date.  Failed files: ${{ env.MATCHED_FILES }}"
             exit 1
           else 
             echo "Schema is up to date"
