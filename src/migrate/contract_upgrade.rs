@@ -53,14 +53,9 @@ mod tests {
     use crate::store::contract_state::{
         get_contract_state, set_contract_state, CONTRACT_TYPE, CONTRACT_VERSION,
     };
-    use crate::test::test_constants::{
-        DEFAULT_CONTRACT_ADMIN, DEFAULT_CONTRACT_ATTRIBUTE, DEFAULT_CONTRACT_NAME,
-    };
     use crate::test::test_helpers::single_attribute_for_key;
     use crate::test::test_instantiate::test_instantiate;
     use crate::types::core::error::ContractError;
-    use crate::types::core::msg::InstantiateMsg;
-    use cosmwasm_std::testing::mock_info;
     use provwasm_mocks::mock_dependencies;
 
     #[test]

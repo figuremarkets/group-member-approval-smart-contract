@@ -20,13 +20,13 @@ pub fn instantiate(
 #[entry_point]
 pub fn execute(
     deps: DepsMut<ProvenanceQuery>,
-    env: Env,
+    _env: Env,
     info: MessageInfo,
     msg: ExecuteMsg,
 ) -> Result<Response<ProvenanceMsg>, ContractError> {
     match msg {
         ExecuteMsg::ApproveGroupMembership { group_id } => {
-            approve_group_membership(deps, env, info, group_id)
+            approve_group_membership(deps, info, group_id)
         }
     }
 }

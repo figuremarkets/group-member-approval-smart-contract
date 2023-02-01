@@ -3,6 +3,9 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum ContractError {
+    #[error("Contract execution on route [{route}] failed: {message}")]
+    ExecuteError { route: String, message: String },
+
     #[error("Contract instantiation failed: {message}")]
     InstantiationError { message: String },
 

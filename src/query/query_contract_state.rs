@@ -21,7 +21,7 @@ mod tests {
 
     #[test]
     fn test_query_when_missing_contract_state() {
-        let mut deps = mock_dependencies(&[]);
+        let deps = mock_dependencies(&[]);
         let result = query_contract_state(deps.as_ref());
         assert!(
             matches!(result, Err(ContractError::StorageError { .. })),

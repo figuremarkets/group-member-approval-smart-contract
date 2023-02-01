@@ -1,7 +1,7 @@
 use crate::store::contract_state::{set_contract_state, ContractState};
 use crate::types::core::error::ContractError;
 use crate::types::core::msg::InstantiateMsg;
-use crate::util::helpers::check_funds_are_empty;
+use crate::util::route_helpers::check_funds_are_empty;
 use cosmwasm_std::{DepsMut, Env, MessageInfo, Response};
 use provwasm_std::{bind_name, NameBinding, ProvenanceMsg, ProvenanceQuery};
 use result_extensions::ResultExtensions;
