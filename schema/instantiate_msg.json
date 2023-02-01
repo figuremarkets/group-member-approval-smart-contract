@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "InstantiateMsg",
+  "type": "object",
+  "required": [
+    "attribute_name",
+    "bind_attribute_name",
+    "contract_name"
+  ],
+  "properties": {
+    "attribute_name": {
+      "type": "string"
+    },
+    "bind_attribute_name": {
+      "type": "boolean"
+    },
+    "contract_name": {
+      "type": "string"
+    }
+  }
+}
