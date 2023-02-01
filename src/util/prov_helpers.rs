@@ -11,7 +11,7 @@ pub fn get_group_id_attribute_values<S: Into<String>>(
         .iter()
         .filter(|attr| attr.name == name && attr.value_type == AttributeValueType::Int)
         .filter_map(|attr| from_binary::<u64>(&attr.value).ok())
-        .map(|group_id| Uint64::new(group_id))
+        .map(Uint64::new)
         .collect()
 }
 

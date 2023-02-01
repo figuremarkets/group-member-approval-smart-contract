@@ -21,7 +21,7 @@ pub fn approve_group_membership(
         .get_attributes(info.sender.clone(), Some(attribute_name.clone()))
         .ok()
         .map(|attributes| get_group_id_attribute_values(&attributes, &attribute_name))
-        .unwrap_or(vec![]);
+        .unwrap_or_default();
     // First, verify that this member has not yet approved itself for this group.  Duplicate ids
     // would be a waste of hash and needlessly increase data storage on chain
     if existing_group_ids
