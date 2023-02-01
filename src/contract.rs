@@ -38,7 +38,7 @@ pub fn query(
     msg: QueryMsg,
 ) -> Result<Binary, ContractError> {
     match msg {
-        QueryMsg::QueryContractState { .. } => query_contract_state(deps),
+        QueryMsg::QueryContractState {} => query_contract_state(deps),
     }
 }
 

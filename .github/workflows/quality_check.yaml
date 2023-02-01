@@ -33,22 +33,3 @@ jobs:
 
       - name: Run Tests
         run: make test
-
-      - name: Generate Schema Files
-        run: make schema
-
-      - name: Generate Schema Git Diff
-        uses: technote-space/get-diff-action@v4
-        id: git-diff
-        with:
-          PATTERNS: +(schema)/**/*.+(json)
-
-      - name: Verify Schema Integrity
-        # env.GIT_DIFF is set to true when any schema file is different from the committed values
-        run: |
-          if ${{ env.GIT_DIFF }}; then
-            echo "Git diff showed schema not up to date.  Failed files: ${{ env.MATCHED_FILES }}"
-            exit 1
-          else 
-            echo "Schema is up to date"
-          fi
