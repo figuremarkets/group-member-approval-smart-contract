@@ -191,8 +191,7 @@ mod tests {
 
     fn get_binary_int(value: u64) -> Binary {
         to_binary(&value).expect(&format!(
-            "Expected value [{}] to be properly converted to binary",
-            value
+            "Expected value [{value}] to be properly converted to binary",
         ))
     }
 }

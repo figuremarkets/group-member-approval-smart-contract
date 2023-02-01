@@ -41,7 +41,7 @@ pub fn set_contract_state(
     CONTRACT_STATE
         .save(storage, contract_info)
         .map_err(|e| ContractError::StorageError {
-            message: format!("{:?}", e),
+            message: format!("{e:?}"),
         })
 }
 
@@ -49,7 +49,7 @@ pub fn get_contract_state(storage: &dyn Storage) -> Result<ContractState, Contra
     CONTRACT_STATE
         .load(storage)
         .map_err(|e| ContractError::StorageError {
-            message: format!("{:?}", e),
+            message: format!("{e:?}"),
         })
 }
 

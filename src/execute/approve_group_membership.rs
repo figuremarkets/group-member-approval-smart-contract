@@ -97,8 +97,7 @@ mod tests {
                 );
                 assert_eq!(
                     format!(
-                        "group with id [1] has already been approved by member [{}]",
-                        DEFAULT_GROUP_MEMBER
+                        "group with id [1] has already been approved by member [{DEFAULT_GROUP_MEMBER}]",
                     ),
                     message,
                     "unexpected message in execute error",

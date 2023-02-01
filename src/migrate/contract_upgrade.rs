@@ -26,8 +26,8 @@ fn check_valid_migration(contract_state: &ContractState) -> Result<(), ContractE
     if CONTRACT_TYPE != contract_state.contract_type {
         return ContractError::MigrationError {
             message: format!(
-                "target migration contract type [{}] does not match stored contract type [{}]",
-                CONTRACT_TYPE, contract_state.contract_type,
+                "target migration contract type [{CONTRACT_TYPE}] does not match stored contract type [{}]",
+                contract_state.contract_type,
             ),
         }
         .to_err();
@@ -38,8 +38,8 @@ fn check_valid_migration(contract_state: &ContractState) -> Result<(), ContractE
     if existing_contract_version >= new_contract_version {
         return ContractError::MigrationError {
             message: format!(
-                "target migration contract version [{}] is too low to use. stored contract version is [{}]",
-                CONTRACT_VERSION, &contract_state.contract_version,
+                "target migration contract version [{CONTRACT_VERSION}] is too low to use. stored contract version is [{}]",
+                &contract_state.contract_version,
             )
         }
         .to_err();
@@ -118,7 +118,7 @@ mod tests {
         match err {
             ContractError::MigrationError { message } => {
                 assert_eq!(
-                    format!("target migration contract type [{}] does not match stored contract type [unexpected contract type]", CONTRACT_TYPE),
+                    format!("target migration contract type [{CONTRACT_TYPE}] does not match stored contract type [unexpected contract type]"),
                     message,
                     "unexpected error message when bad contract type encountered",
                 );
@@ -135,7 +135,7 @@ mod tests {
         match err {
             ContractError::MigrationError { message } => {
                 assert_eq!(
-                    format!("target migration contract version [{}] is too low to use. stored contract version is [999.999.999]", CONTRACT_VERSION),
+                    format!("target migration contract version [{CONTRACT_VERSION}] is too low to use. stored contract version is [999.999.999]"),
                     message,
                     "unexpected error message when bad contract version encountered",
                 );
