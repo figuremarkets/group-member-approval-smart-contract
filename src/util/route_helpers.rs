@@ -9,6 +9,6 @@ pub fn check_funds_are_empty(info: &MessageInfo) -> Result<(), ContractError> {
         }
         .to_err()
     } else {
-        Ok(())
+        ().to_ok()
     }
 }
