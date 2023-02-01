@@ -2,8 +2,9 @@ use std::env::current_dir;
 use std::fs::create_dir_all;
 
 use cosmwasm_schema::{export_schema, remove_schemas, schema_for};
+use group_memeber_approval_smart_contract::store::contract_state::ContractState;
 use group_memeber_approval_smart_contract::types::core::msg::{
-    ExecuteMsg, InstantiateMsg, MigrateMsg,
+    ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg,
 };
 
 fn main() {
@@ -14,6 +15,8 @@ fn main() {
     // Top-level Msg values
     export_schema(&schema_for!(ExecuteMsg), &out_dir);
     export_schema(&schema_for!(InstantiateMsg), &out_dir);
+    export_schema(&schema_for!(QueryMsg), &out_dir);
     export_schema(&schema_for!(MigrateMsg), &out_dir);
     // Result data
+    export_schema(&schema_for!(ContractState), &out_dir);
 }
