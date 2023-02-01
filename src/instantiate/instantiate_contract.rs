@@ -1,6 +1,7 @@
 use crate::store::contract_state::{set_contract_state, ContractState};
 use crate::types::core::error::ContractError;
 use crate::types::core::msg::InstantiateMsg;
+use crate::util::helpers::check_funds_are_empty;
 use cosmwasm_std::{DepsMut, Env, MessageInfo, Response};
 use provwasm_std::{bind_name, NameBinding, ProvenanceMsg, ProvenanceQuery};
 use result_extensions::ResultExtensions;
@@ -11,6 +12,7 @@ pub fn instantiate_contract(
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response<ProvenanceMsg>, ContractError> {
+    check_funds_are_empty(&info)?;
     if msg.contract_name.is_empty() {
         return ContractError::InstantiationError {
             message: "Provided contract name must not be empty".to_string(),
@@ -50,9 +52,25 @@ mod tests {
     use crate::types::core::error::ContractError;
     use crate::types::core::msg::InstantiateMsg;
     use cosmwasm_std::testing::{mock_env, mock_info, MOCK_CONTRACT_ADDR};
-    use cosmwasm_std::CosmosMsg;
+    use cosmwasm_std::{coins, CosmosMsg};
     use provwasm_mocks::mock_dependencies;
     use provwasm_std::{NameMsgParams, ProvenanceMsg, ProvenanceMsgParams};
+
+    #[test]
+    fn test_instantiate_with_provided_funds() {
+        let mut deps = mock_dependencies(&[]);
+        let info = mock_info(DEFAULT_CONTRACT_ADMIN, &coins(100, "nhash"));
+        let msg = InstantiateMsg {
+            contract_name: DEFAULT_CONTRACT_NAME.to_string(),
+            attribute_name: DEFAULT_CONTRACT_ATTRIBUTE.to_string(),
+            bind_attribute_name: true,
+        };
+        let result = instantiate_contract(deps.as_mut(), mock_env(), info, msg);
+        assert!(
+            matches!(result, Err(ContractError::InvalidFundsError { .. })),
+            "an invalid funds error should occur when funds are provided to instantiation",
+        );
+    }
 
     #[test]
     fn test_instantiate_with_invalid_contract_name() {
@@ -66,7 +84,7 @@ mod tests {
         let result = instantiate_contract(deps.as_mut(), mock_env(), info, msg);
         assert!(
             matches!(result, Err(ContractError::InstantiationError { .. })),
-            "An instantiation error should occur when an invalid contract name is used",
+            "an instantiation error should occur when an invalid contract name is used",
         );
     }
 
@@ -82,7 +100,7 @@ mod tests {
         let result = instantiate_contract(deps.as_mut(), mock_env(), info, msg);
         assert!(
             matches!(result, Err(ContractError::InstantiationError { .. })),
-            "An instantiation error should occur when an invalid contract name is used",
+            "an instantiation error should occur when an invalid contract name is used",
         );
     }
 
@@ -100,6 +118,11 @@ mod tests {
         assert!(
             response.messages.is_empty(),
             "no messages should be emitted when the name binding is not requested",
+        );
+        assert_eq!(
+            3,
+            response.attributes.len(),
+            "the correct number of attributes should be emitted",
         );
         assert_eq!(
             "instantiate",
@@ -168,6 +191,11 @@ mod tests {
             }
             msg => panic!("unexpected msg type emitted from instantiate: {:?}", msg),
         }
+        assert_eq!(
+            3,
+            response.attributes.len(),
+            "the correct number of attributes should be emitted",
+        );
         assert_eq!(
             "instantiate",
             single_attribute_for_key(&response, "action"),

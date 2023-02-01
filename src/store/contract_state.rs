@@ -75,9 +75,9 @@ mod tests {
                 DEFAULT_CONTRACT_NAME,
             ),
         )
-        .expect("The contract state should be saved successfully");
+        .expect("the contract state should be saved successfully");
         let contract_state = get_contract_state(&deps.storage)
-            .expect("Contract state should be successfully pulled from storage");
+            .expect("contract state should be successfully pulled from storage");
         assert_eq!(
             contract_state.admin.as_str(),
             DEFAULT_CONTRACT_ADMIN,

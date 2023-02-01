@@ -6,6 +6,9 @@ pub enum ContractError {
     #[error("Contract instantiation failed: {message}")]
     InstantiationError { message: String },
 
+    #[error("Invalid funds: {message}")]
+    InvalidFundsError { message: String },
+
     #[error("Contract migration failed: {message}")]
     MigrationError { message: String },
 

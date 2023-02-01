@@ -1,6 +1,6 @@
 use crate::types::core::error::ContractError;
 use cosmwasm_std::{DepsMut, Env, MessageInfo, Response, Uint128};
-use provwasm_std::{ProvenanceMsg, ProvenanceQuery};
+use provwasm_std::{ProvenanceMsg, ProvenanceQuerier, ProvenanceQuery};
 
 pub fn approve_group_membership(
     deps: DepsMut<ProvenanceQuery>,
