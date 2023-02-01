@@ -8,7 +8,6 @@ pub struct InstantiateMsg {
     pub contract_name: String,
     pub attribute_name: String,
     pub bind_attribute_name: bool,
-    pub random_value: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
