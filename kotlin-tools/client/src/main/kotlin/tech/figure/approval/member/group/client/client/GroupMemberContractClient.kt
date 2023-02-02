@@ -53,7 +53,7 @@ open class GroupMemberContractClient(
 
     fun queryContractState(): GroupMemberContractState = queryContract(QueryContractState)
 
-    protected fun executeContract(
+    private fun executeContract(
         executeMsg: GroupMemberContractExecute,
         signer: Signer,
         broadcastMode: BroadcastMode,
