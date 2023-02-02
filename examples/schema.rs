@@ -2,8 +2,8 @@ use std::env::current_dir;
 use std::fs::create_dir_all;
 
 use cosmwasm_schema::{export_schema, remove_schemas, schema_for};
-use group_memeber_approval_smart_contract::store::contract_state::ContractState;
-use group_memeber_approval_smart_contract::types::core::msg::{
+use group_member_approval_smart_contract::store::contract_state::ContractState;
+use group_member_approval_smart_contract::types::core::msg::{
     ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg,
 };
 
