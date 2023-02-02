@@ -47,7 +47,6 @@ class LocalGroupMemberContractClient(
         instantiateMsg: InstantiateGroupMemberContract,
         admin: Signer,
         instantiationMode: GroupMemberContractInstantiationMode = StoreAndInstantiate(),
-        attributeName: String = "memberapproval.pb",
     ): InstantiateGroupMemberContractResponse = when (instantiationMode) {
         is StoreAndInstantiate -> storeContractGetCodeId(admin = admin, wasmLocation = instantiationMode.wasmLocation)
         is InstantiateOnly -> instantiationMode.codeId
@@ -58,11 +57,7 @@ class LocalGroupMemberContractClient(
                 instantiate.codeId = codeId
                 instantiate.label = "group-member-approval"
                 instantiate.sender = admin.address()
-                instantiate.msg = InstantiateGroupMemberContract(
-                    contractName = "group_member_approval_smart_contract",
-                    attributeName = attributeName,
-                    bindAttributeName = true,
-                ).let(objectMapper::writeValueAsString).toByteString()
+                instantiate.msg = instantiateMsg.let(objectMapper::writeValueAsString).toByteString()
             }.build().toAny().toTxBody(),
             signers = BaseReqSigner(signer = admin).let(::listOf),
             mode = BroadcastMode.BROADCAST_MODE_BLOCK,
