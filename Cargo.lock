@@ -346,7 +346,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "group-memeber-approval-smart-contract"
+name = "group-member-approval-smart-contract"
 version = "1.0.0"
 dependencies = [
  "cosmwasm-schema",
