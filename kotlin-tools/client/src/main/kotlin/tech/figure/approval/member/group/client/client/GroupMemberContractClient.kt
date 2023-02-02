@@ -18,6 +18,7 @@ import tech.figure.approval.member.group.client.dto.executemsg.base.GroupMemberC
 import tech.figure.approval.member.group.client.dto.querymsg.GroupMemberContractState
 import tech.figure.approval.member.group.client.dto.querymsg.QueryContractState
 import tech.figure.approval.member.group.client.dto.querymsg.base.GroupMemberContractQuery
+import tech.figure.approval.member.group.client.extensions.checkSuccess
 import tech.figure.approval.member.group.client.extensions.getAttributeValue
 import tech.figure.approval.member.group.client.extensions.singleWasmEvent
 import tech.figure.approval.member.group.client.util.GroupMemberApprovalOMUtil
@@ -25,9 +26,9 @@ import tech.figure.approval.member.group.client.util.GroupMemberContractAddressR
 import tendermint.abci.Types.Event
 
 open class GroupMemberContractClient(
-    private val pbClient: PbClient,
+    protected val pbClient: PbClient,
     private val addressResolver: GroupMemberContractAddressResolver,
-    private val objectMapper: ObjectMapper = GroupMemberApprovalOMUtil.getObjectMapper(),
+    protected val objectMapper: ObjectMapper = GroupMemberApprovalOMUtil.getObjectMapper(),
 ) {
     val contractAddress by lazy { addressResolver.getAddress(pbClient) }
 
@@ -52,7 +53,7 @@ open class GroupMemberContractClient(
 
     fun queryContractState(): GroupMemberContractState = queryContract(QueryContractState)
 
-    private fun executeContract(
+    protected fun executeContract(
         executeMsg: GroupMemberContractExecute,
         signer: Signer,
         broadcastMode: BroadcastMode,
@@ -64,10 +65,7 @@ open class GroupMemberContractClient(
         }.build().toAny().toTxBody(),
         signers = BaseReqSigner(signer = signer).let(::listOf),
         mode = broadcastMode,
-    ).let { response ->
-        check(response.txResponse.code == 0) { "Unexpected contract response: ${response.txResponse.rawLog}" }
-        response.singleWasmEvent() to response
-    }
+    ).checkSuccess().let { response -> response.singleWasmEvent() to response }
 
     private inline fun <T : GroupMemberContractQuery, reified U : Any> queryContract(
         queryMsg: T,

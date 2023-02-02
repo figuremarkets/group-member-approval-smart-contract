@@ -13,3 +13,7 @@ internal fun Event.getAttributeValue(attribute: String): String = attributesList
     ?.value
     ?.toStringUtf8()
     ?: error("Expected attribute [$attribute] to be emitted by the smart contract")
+
+internal fun BroadcastTxResponse.checkSuccess(): BroadcastTxResponse = this.also {
+    check(it.txResponse.code == 0) { "Expected msg broadcast to succeed, but failed with logs: ${it.txResponse.rawLog}" }
+}

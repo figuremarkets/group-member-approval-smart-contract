@@ -27,12 +27,12 @@ gitHooks {
         from {
             """
                 echo "Running pre-commit ktlint check"
-                # If the gradle file exists, then the terminal is currently in this project's directory
+                # If the gradle file exists, then the terminal is currently in this repo's kotlin-tools directory
                 if [ -e gradlew ]
                 then
                     ./gradlew ktlintCheck
                 else
-                    # Else, assume the current directory is the main directory to avoid blowing up commits
+                    # Else, assume the current directory is the main directory to avoid blowing up on commits
                     ./kotlin-tools/gradlew --project-dir ./kotlin-tools ktlintCheck
                 fi
             """.trimIndent()
