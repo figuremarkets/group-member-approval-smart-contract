@@ -21,7 +21,7 @@ import tech.figure.approval.member.group.devtools.client.model.GroupMemberContra
 import tech.figure.approval.member.group.devtools.client.model.GroupMemberContractWasmLocation
 import tech.figure.approval.member.group.devtools.client.model.GroupMemberContractWasmLocation.GitHub
 import tech.figure.approval.member.group.devtools.client.model.GroupMemberContractWasmLocation.LocalFile
-import tech.figure.approval.member.group.devtools.extensions.base64Decode
+import tech.figure.approval.member.group.devtools.extensions.base64DecodeOrValue
 import tech.figure.approval.member.group.devtools.extensions.checkSuccess
 import tech.figure.approval.member.group.devtools.extensions.gzip
 import tech.figure.approval.member.group.devtools.feign.GitHubApiClient
@@ -69,12 +69,12 @@ class LocalGroupMemberContractClient(
             gasAdjustment = 1.1,
         ).txResponse
             .eventsList
-            .singleOrNull { it.type.base64Decode() == "instantiate" }
+            .singleOrNull { it.type.base64DecodeOrValue() == "instantiate" }
             ?.attributesList
-            ?.singleOrNull { it.key.toStringUtf8().base64Decode() == "_contract_address" }
+            ?.singleOrNull { it.key.toStringUtf8().base64DecodeOrValue() == "_contract_address" }
             ?.value
             ?.toStringUtf8()
-            ?.base64Decode()
+            ?.base64DecodeOrValue()
             .orThrow { IllegalStateException("Failed to find contract address after instantiating contract with code id [$codeId]") }
             .let { contractAddress ->
                 InstantiateGroupMemberContractResponse(storedCodeId = codeId, contractAddress = contractAddress)
@@ -118,12 +118,12 @@ class LocalGroupMemberContractClient(
         ).checkSuccess()
             .txResponse
             .eventsList
-            .singleOrNull { it.type.base64Decode() == "store_code" }
+            .singleOrNull { it.type.base64DecodeOrValue() == "store_code" }
             ?.attributesList
-            ?.singleOrNull { it.key.toStringUtf8().base64Decode() == "code_id" }
+            ?.singleOrNull { it.key.toStringUtf8().base64DecodeOrValue() == "code_id" }
             ?.value
             ?.toStringUtf8()
-            ?.base64Decode()
+            ?.base64DecodeOrValue()
             ?.toLongOrNull()
             .orThrow { IllegalStateException("Failed to derive code id from stored contract") }
     }
