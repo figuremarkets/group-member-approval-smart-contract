@@ -66,12 +66,13 @@ class LocalGroupMemberContractClient(
                 ).let(objectMapper::writeValueAsString).toByteString()
             }.build().toAny().toTxBody(),
             signers = BaseReqSigner(signer = admin).let(::listOf),
+            mode = BroadcastMode.BROADCAST_MODE_BLOCK,
             gasAdjustment = 1.1,
         ).txResponse
             .eventsList
             .singleOrNull { it.type.base64DecodeOrValue() == "instantiate" }
             ?.attributesList
-            ?.singleOrNull { it.key.toStringUtf8().base64DecodeOrValue() == "_contract_address" }
+            ?.singleOrNull { it.key.toStringUtf8().base64DecodeOrValue() in "_contract_address" }
             ?.value
             ?.toStringUtf8()
             ?.base64DecodeOrValue()
