@@ -51,18 +51,28 @@ open class GroupMemberContractClient(
         )
     }
 
+    fun genExecuteGroupMemberApprovalMsg(
+        executeMsg: ExecuteApproveGroupMembership,
+        signerAddress: String,
+    ): MsgExecuteContract = genMsg(executeMsg = executeMsg, signerAddress = signerAddress)
+
     fun queryContractState(): GroupMemberContractState = queryContract(QueryContractState)
+
+    private fun genMsg(
+        executeMsg: GroupMemberContractExecute,
+        signerAddress: String,
+    ): MsgExecuteContract = MsgExecuteContract.newBuilder().also { msg ->
+        msg.msg = objectMapper.writeValueAsString(executeMsg).toByteString()
+        msg.contract = contractAddress
+        msg.sender = signerAddress
+    }.build()
 
     private fun executeContract(
         executeMsg: GroupMemberContractExecute,
         signer: Signer,
         broadcastMode: BroadcastMode,
     ): Pair<Event, BroadcastTxResponse> = pbClient.estimateAndBroadcastTx(
-        txBody = MsgExecuteContract.newBuilder().also { msg ->
-            msg.msg = objectMapper.writeValueAsString(executeMsg).toByteString()
-            msg.contract = contractAddress
-            msg.sender = signer.address()
-        }.build().toAny().toTxBody(),
+        txBody = genMsg(executeMsg = executeMsg, signerAddress = signer.address()).toAny().toTxBody(),
         signers = BaseReqSigner(signer = signer).let(::listOf),
         mode = broadcastMode,
     ).checkSuccess().let { response -> response.singleWasmEvent() to response }
