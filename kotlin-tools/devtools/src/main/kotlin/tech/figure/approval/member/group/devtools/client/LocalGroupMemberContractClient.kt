@@ -29,6 +29,10 @@ import tech.figure.approval.member.group.devtools.feign.models.instantiatemsg.In
 import java.io.File
 import java.net.URL
 
+/**
+ * An extension of the GroupMemberContractClient that also provides the ability to instantiate an instance of the
+ * contract with the chain instance to which the given PbClient is connected.
+ */
 class LocalGroupMemberContractClient(
     pbClient: PbClient,
     addressResolver: GroupMemberContractAddressResolver,
@@ -43,6 +47,10 @@ class LocalGroupMemberContractClient(
         const val CONTRACT_REPOSITORY = "group-member-approval-smart-contract"
     }
 
+    /**
+     * Instantiates a new instance of the group-member-approval-smart-contract.  Includes the option to also store
+     * the contract, based on the input to the instantiationMode parameter.
+     */
     fun instantiateContract(
         instantiateMsg: InstantiateGroupMemberContract,
         admin: Signer,

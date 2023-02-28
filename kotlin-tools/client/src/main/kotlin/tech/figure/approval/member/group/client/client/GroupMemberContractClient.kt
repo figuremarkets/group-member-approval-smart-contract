@@ -25,6 +25,10 @@ import tech.figure.approval.member.group.client.util.GroupMemberApprovalOMUtil
 import tech.figure.approval.member.group.client.util.GroupMemberContractAddressResolver
 import tendermint.abci.Types.Event
 
+/**
+ * This client file is designed to communicate with the group-member-approval-smart contract.  It mirrors all functionality
+ * exposed by each execution and query route on the contract.
+ */
 open class GroupMemberContractClient(
     protected val pbClient: PbClient,
     private val addressResolver: GroupMemberContractAddressResolver,
@@ -32,6 +36,9 @@ open class GroupMemberContractClient(
 ) {
     val contractAddress by lazy { addressResolver.getAddress(pbClient) }
 
+    /**
+     * Sends a msg to the contract to signify that the signing address has consented to be a member of the given group.
+     */
     fun executeGroupMemberApproval(
         executeMsg: ExecuteApproveGroupMembership,
         signer: Signer,
@@ -51,11 +58,19 @@ open class GroupMemberContractClient(
         )
     }
 
+    /**
+     * Generates a msg that signifies that the expected signer has consented to be a member of the given group.  This
+     * route is useful for generating a proper msg format without immediately signing it, allowing the transaction to
+     * be passed to an external entity, or for the msg to be batched into a larger transaction's set of messages.
+     */
     fun genExecuteGroupMemberApprovalMsg(
         executeMsg: ExecuteApproveGroupMembership,
         signerAddress: String,
     ): MsgExecuteContract = genMsg(executeMsg = executeMsg, signerAddress = signerAddress)
 
+    /**
+     * Returns all details pertaining to the smart contract's state, which denotes its name, version, etc.
+     */
     fun queryContractState(): GroupMemberContractState = queryContract(QueryContractState)
 
     private fun genMsg(
