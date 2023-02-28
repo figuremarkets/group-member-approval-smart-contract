@@ -2,9 +2,9 @@
 This smart contract provides a way for group members to assert, on chain, their intention to become a member of a
 [Provenance Blockchain Group](https://docs.cosmos.network/main/modules/group).
 
-This solves an issue in the groups module: any admin of any group can add a member to a group.  In order to create an
-ecosystem that respects group member involvement, this grants group members the ability to explicitly state that they
-intended to become a member of a group.
+This solves an issue in the groups module: any admin of any group can add a member to a group without their knowledge.  
+In order to create an ecosystem that respects group member involvement, this grants group members the ability to 
+explicitly state that they intended to become a member of a group.
 
 ## Contract Instantiation
 
