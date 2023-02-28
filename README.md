@@ -33,7 +33,7 @@ Example instantiation payload:
 ## Contract Execution
 
 In order for a member to verify their membership in a group, they must simply invoke the contract's sole execution route
-with the following payload:
+with the following payload (with the appropriate group id):
 
 ```json
 {
