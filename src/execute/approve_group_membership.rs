@@ -8,6 +8,25 @@ use provwasm_std::{
 };
 use result_extensions::ResultExtensions;
 
+/// Invoked via the contract's execution functionality.  Adds an attribute to the signer that
+/// denotes that they affirm their membership in a [Provenance Blockchain Group](https://docs.cosmos.network/main/modules/group)
+/// by setting an int value on the designated attribute equal to the group identifier.  Note:
+/// Cosmwasm does not expose functionality to query the group module, so this route does not do any
+/// verification that the signer is actually a member of the approved group.  However, consenting to
+/// either being or becoming a member of a group is simply an act of compliance.  False claims made
+/// herein can be queried from the standard chain routes, which allows external consumers of this
+/// attribute to verify this statement after it has been made.  The route does, however, validate
+/// that the account does not already have an attribute value affirming the existing group,
+/// preventing duplicate writes.
+///
+/// # Parameters
+///
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
+/// * `info` A message information object provided by the cosmwasm framework.  Describes the sender
+/// of the instantiation message, as well as the funds provided as an amount during the transaction.
+/// * `group_id` The unique identifier of a given group for which the signing account consents to
+/// membership.
 pub fn approve_group_membership(
     deps: DepsMut<ProvenanceQuery>,
     info: MessageInfo,

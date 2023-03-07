@@ -7,6 +7,15 @@ use provwasm_std::{ProvenanceMsg, ProvenanceQuery};
 use result_extensions::ResultExtensions;
 use semver::Version;
 
+/// The main entrypoint function for running a code migration.  Auxiliary code run when a stored
+/// instance of this contract on chain is migrated over the existing instance.  Verifies that the
+/// new code instance is a newer version than the current version, and then modifies the contract
+/// state to reflect the new version information contained in the stored file.
+///
+/// # Parameters
+///
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
 pub fn contract_upgrade(
     deps: DepsMut<ProvenanceQuery>,
 ) -> Result<Response<ProvenanceMsg>, ContractError> {
@@ -21,6 +30,12 @@ pub fn contract_upgrade(
         .to_ok()
 }
 
+/// Verifies that the executing migration has a valid contract type and contract version based on
+/// the currently-stored values.
+///
+/// # Parameters
+///
+/// * `contract_state` The current contract state instance from the store.
 fn check_valid_migration(contract_state: &ContractState) -> Result<(), ContractError> {
     // Prevent other contracts of different types from migrating over this one
     if CONTRACT_TYPE != contract_state.contract_type {

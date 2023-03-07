@@ -12,6 +12,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Generate Latest Schema Files
+        uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: --example schema
+
+      - name: Generate Rust Docs
+        uses: actions-rs/cargo@v1
+        with:
+          command: doc
+          args: --no-deps
+
+      - name: Stage Cargo Docs
+        run: |
+          # Add redirect page to inner doc index
+          echo "<meta http-equiv=\"refresh\" content=\"0; url=group_member_approval_smart_contract\">" >> ./target/doc/index.html
+          # Create doc deployment location
+          mkdir ./pages-files
+          # Move documentation to its configured location in settings
+          cp -r target/doc ./pages-files/docs
+
+      - name: Deploy Docs to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4.2.2
+        with:
+          branch: gh-pages
+          folder: pages-files
+
       - name: Optimize Contract
         run: make optimize
 
