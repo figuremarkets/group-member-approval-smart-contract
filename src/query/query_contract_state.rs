@@ -4,6 +4,12 @@ use cosmwasm_std::{to_binary, Binary, Deps};
 use provwasm_std::ProvenanceQuery;
 use result_extensions::ResultExtensions;
 
+/// Fetches the current values within the [ContractState](crate::store::contract_state::ContractState).
+///
+/// # Parameters
+///
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
 pub fn query_contract_state(deps: Deps<ProvenanceQuery>) -> Result<Binary, ContractError> {
     to_binary(&get_contract_state(deps.storage)?)?.to_ok()
 }

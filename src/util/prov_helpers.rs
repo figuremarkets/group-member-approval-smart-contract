@@ -1,6 +1,14 @@
 use cosmwasm_std::{from_binary, Uint64};
 use provwasm_std::{AttributeValueType, Attributes};
 
+/// Parses all group ids from the [Provenance Blockchain Attributes](https://docs.provenance.io/modules/account)
+/// provided by filtering for all values that match the given name and have an assigned int value.
+///
+/// # Parameters
+///
+/// * `attributes` Attributes fetched via a chain query.
+/// * `name` A [Provenance Blockchain Name Module](https://docs.provenance.io/modules/name-module)
+/// name used to write the attribute.
 pub fn get_group_id_attribute_values<S: Into<String>>(
     attributes: &Attributes,
     name: S,

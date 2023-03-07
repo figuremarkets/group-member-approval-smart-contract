@@ -6,6 +6,21 @@ use cosmwasm_std::{DepsMut, Env, MessageInfo, Response};
 use provwasm_std::{bind_name, NameBinding, ProvenanceMsg, ProvenanceQuery};
 use result_extensions::ResultExtensions;
 
+/// The main functionality executed when the smart contract is first instantiated.  This creates the
+/// singleton instance of [ContractState] used to verify the attribute name used in the contract,
+/// as well as optionally binding the contract's name if it does not need to be bound after creation
+/// due to namespace restrictions.
+///
+/// # Parameters
+///
+/// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
+/// resources like contract internal storage and a querier to retrieve blockchain objects.
+/// * `env` An environment object provided by the cosmwasm framework.  Describes the contract's
+/// details, as well as blockchain information at the time of the transaction.
+/// * `info` A message information object provided by the cosmwasm framework.  Describes the sender
+/// of the instantiation message, as well as the funds provided as an amount during the transaction.
+/// * `msg` A custom instantiation message defined by this contract for creating the initial
+/// configuration used by the contract.
 pub fn instantiate_contract(
     deps: DepsMut<ProvenanceQuery>,
     env: Env,
