@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["contract_upgrade","The main entrypoint function for running a code migration."]]};

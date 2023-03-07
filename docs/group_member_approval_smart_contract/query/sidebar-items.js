@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["query_contract_state","A query that fetches the stored values in the ContractState."]]};

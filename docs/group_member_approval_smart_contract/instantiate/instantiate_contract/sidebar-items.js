@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["instantiate_contract","The main functionality executed when the smart contract is first instantiated.  This creates the singleton instance of [ContractState] used to verify the attribute name used in the contract, as well as optionally binding the contract’s name if it does not need to be bound after creation due to namespace restrictions."]]};

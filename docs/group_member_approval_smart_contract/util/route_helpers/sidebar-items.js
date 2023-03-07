@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["check_funds_are_empty","Verifies that the provided info does not include and funds, ensuring that the account invoking the contract does not accidentally store funds in the contract that cannot be retrieved due to lack of tracking."]]};

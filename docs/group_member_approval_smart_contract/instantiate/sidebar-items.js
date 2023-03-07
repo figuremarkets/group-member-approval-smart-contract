@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["instantiate_contract","The main functionality executed when the smart contract is first instantiated."]]};
