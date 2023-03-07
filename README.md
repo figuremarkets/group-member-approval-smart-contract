@@ -1,10 +1,23 @@
-## Group Member Approval Smart Contract
+# Group Member Approval Smart Contract
 This smart contract provides a way for group members to assert, on chain, their intention to become a member of a
 [Provenance Blockchain Group](https://docs.cosmos.network/main/modules/group).
 
 This solves an issue in the groups module: any admin of any group can add a member to a group without their knowledge.  
 In order to create an ecosystem that respects group member involvement, this grants group members the ability to 
 explicitly state that they intended to become a member of a group.
+
+## Status
+[![Latest Release][release-badge]][release-latest]
+[![Apache 2.0 License][license-badge]][license-url]
+
+[license-badge]: https://img.shields.io/github/license/FigureTechnologies/group-member-approval-smart-contract.svg
+[license-url]: https://github.com/FigureTechnologies/group-member-approval-smart-contract/blob/main/LICENSE
+[release-badge]: https://img.shields.io/github/tag/FigureTechnologies/group-member-approval-smart-contract.svg
+[release-latest]: https://github.com/FigureTechnologies/group-member-approval-smart-contract/releases/latest
+
+## Documentation
+
+For more information on the internal composition of the contract, view the [published documentation](https://figuretechnologies.github.io/group-member-approval-smart-contract/).
 
 ## Contract Instantiation
 
