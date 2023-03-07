@@ -1,6 +1,6 @@
 [package]
 name = "group-member-approval-smart-contract"
-version = "1.0.0"
+version = "1.0.2"
 authors = ["Jake Schwartz <jschwartz@figure.com>", "Pierce Trey <ptrey@figure.com>"]
 edition = "2021"
 
