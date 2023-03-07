@@ -80,11 +80,14 @@ fun fetchContractState(
 ```
 
 ## Dev Tools
+
+### Download
 To fetch the `devtools` via Maven, use the following dependency qualifier:
 ```text
 tech.figure.approval.member.group:member-approval-devtools:{latest-version}
 ```
 
+### Usage
 The devtools include an implementation of the `GroupMemberApprovalClient` that extends its functionality to include
 the ability to create the smart contract programmatically on a specific chain instance.  Create one in the same way you
 would create a `GroupMemberApprovalClient`:
