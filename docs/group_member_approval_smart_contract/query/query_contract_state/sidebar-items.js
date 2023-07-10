@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["query_contract_state","Fetches the current values within the ContractState."]]};
+window.SIDEBAR_ITEMS = {"fn":["query_contract_state"]};

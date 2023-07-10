@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["core","Contains all the driving types for base functionality. Contains all the driving types for base functionality."]]};
+window.SIDEBAR_ITEMS = {"mod":["core"]};

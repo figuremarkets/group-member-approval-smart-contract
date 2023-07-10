@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["get_group_id_attribute_values","Parses all group ids from the Provenance Blockchain Attributes provided by filtering for all values that match the given name and have an assigned int value."]]};
+window.SIDEBAR_ITEMS = {"fn":["get_group_id_attribute_values"]};

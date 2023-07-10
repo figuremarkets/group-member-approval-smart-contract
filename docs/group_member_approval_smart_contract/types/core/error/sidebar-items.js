@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["ContractError","The base error enum that is used to wrap any errors that occur throughout contract execution."]]};
+window.SIDEBAR_ITEMS = {"enum":["ContractError"]};

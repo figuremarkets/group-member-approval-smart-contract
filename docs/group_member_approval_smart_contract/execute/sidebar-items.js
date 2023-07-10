@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["approve_group_membership","The core functionality of the contract.  Allows a blockchain account to approve its membership for a given group id."]]};
+window.SIDEBAR_ITEMS = {"mod":["approve_group_membership"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["error","Defines each custom error that can occur throughout contract execution."],["msg","Defines each input msg utilized by contract invocations."]]};
+window.SIDEBAR_ITEMS = {"mod":["error","msg"]};

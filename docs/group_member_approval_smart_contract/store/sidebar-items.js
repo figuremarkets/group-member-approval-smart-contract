@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["contract_state","Contains the functionality for interacting with the singleton contract state value."]]};
+window.SIDEBAR_ITEMS = {"mod":["contract_state"]};
