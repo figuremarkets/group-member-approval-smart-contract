@@ -43,10 +43,12 @@ open class GroupMemberContractClient(
         executeMsg: ExecuteApproveGroupMembership,
         signer: Signer,
         broadcastMode: BroadcastMode = BroadcastMode.BROADCAST_MODE_BLOCK,
+        feeGranter: String? = null,
     ): ApproveGroupMembershipResponse = executeContract(
         executeMsg = executeMsg,
         signer = signer,
         broadcastMode = broadcastMode,
+        feeGranter = feeGranter,
     ).let { (event, txResponse) ->
         ApproveGroupMembershipResponse(
             txResponse = txResponse,
@@ -86,10 +88,12 @@ open class GroupMemberContractClient(
         executeMsg: GroupMemberContractExecute,
         signer: Signer,
         broadcastMode: BroadcastMode,
+        feeGranter: String?,
     ): Pair<Event, BroadcastTxResponse> = pbClient.estimateAndBroadcastTx(
         txBody = genMsg(executeMsg = executeMsg, signerAddress = signer.address()).toAny().toTxBody(),
         signers = BaseReqSigner(signer = signer).let(::listOf),
         mode = broadcastMode,
+        feeGranter = feeGranter,
     ).checkSuccess().let { response -> response.singleWasmEvent() to response }
 
     private inline fun <T : GroupMemberContractQuery, reified U : Any> queryContract(
