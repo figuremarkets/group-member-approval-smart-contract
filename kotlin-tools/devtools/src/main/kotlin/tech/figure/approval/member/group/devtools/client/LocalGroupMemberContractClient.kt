@@ -55,6 +55,7 @@ class LocalGroupMemberContractClient(
         instantiateMsg: InstantiateGroupMemberContract,
         admin: Signer,
         instantiationMode: GroupMemberContractInstantiationMode = StoreAndInstantiate(),
+        gasAdjustment: Double? = 1.1
     ): InstantiateGroupMemberContractResponse = when (instantiationMode) {
         is StoreAndInstantiate -> storeContractGetCodeId(admin = admin, wasmLocation = instantiationMode.wasmLocation)
         is InstantiateOnly -> instantiationMode.codeId
@@ -69,7 +70,7 @@ class LocalGroupMemberContractClient(
             }.build().toAny().toTxBody(),
             signers = BaseReqSigner(signer = admin).let(::listOf),
             mode = BroadcastMode.BROADCAST_MODE_BLOCK,
-            gasAdjustment = 1.1,
+            gasAdjustment = gasAdjustment,
         ).txResponse
             .eventsList
             .singleOrNull { it.type == "instantiate" }
