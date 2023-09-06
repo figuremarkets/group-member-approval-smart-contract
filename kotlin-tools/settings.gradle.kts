@@ -38,5 +38,5 @@ gitHooks {
             """.trimIndent()
         }
     }
-    createHooks()
+    createHooks(true)
 }

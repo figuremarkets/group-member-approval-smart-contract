@@ -1,3 +1,4 @@
+import gradle.kotlin.dsl.accessors._d4b8fc2be0d12ca5edde6010377ad3ab.java
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
