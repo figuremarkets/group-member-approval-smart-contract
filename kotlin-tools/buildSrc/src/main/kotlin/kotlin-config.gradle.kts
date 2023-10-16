@@ -11,6 +11,10 @@ version = rootProject.version
 
 repositories {
     mavenCentral()
+    // TODO: sc-265993 - Remove after pb client 2.4.0 is fully released
+    maven {
+        url = uri("https://s01.oss.sonatype.org/content/groups/staging/")
+    }
 }
 
 kotlin {
