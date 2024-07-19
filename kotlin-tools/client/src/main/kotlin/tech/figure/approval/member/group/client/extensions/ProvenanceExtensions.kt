@@ -9,9 +9,8 @@ internal fun BroadcastTxResponse.singleWasmEvent(): Event = txResponse
     ?: error("Expected a single wasm event to be emitted when executing the smart contract")
 
 internal fun Event.getAttributeValue(attribute: String): String = attributesList
-    .singleOrNull { it.key.toStringUtf8() == attribute }
+    .singleOrNull { it.key == attribute }
     ?.value
-    ?.toStringUtf8()
     ?: error("Expected attribute [$attribute] to be emitted by the smart contract")
 
 internal fun BroadcastTxResponse.checkSuccess(): BroadcastTxResponse = this.also {

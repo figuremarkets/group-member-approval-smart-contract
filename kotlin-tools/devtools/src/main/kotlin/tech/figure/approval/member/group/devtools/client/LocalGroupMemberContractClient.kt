@@ -75,9 +75,8 @@ class LocalGroupMemberContractClient(
             .eventsList
             .singleOrNull { it.type == "instantiate" }
             ?.attributesList
-            ?.singleOrNull { it.key.toStringUtf8() == "_contract_address" }
+            ?.singleOrNull { it.key == "_contract_address" }
             ?.value
-            ?.toStringUtf8()
             .orThrow { IllegalStateException("Failed to find contract address after instantiating contract with code id [$codeId]") }
             .let { contractAddress ->
                 InstantiateGroupMemberContractResponse(storedCodeId = codeId, contractAddress = contractAddress)
@@ -111,8 +110,8 @@ class LocalGroupMemberContractClient(
     }.gzip().let { gzippedWasmBytes ->
         pbClient.estimateAndBroadcastTx(
             txBody = MsgStoreCode.newBuilder().also { storeCode ->
-                storeCode.instantiatePermissionBuilder.address = admin.address()
-                storeCode.instantiatePermissionBuilder.permission = Types.AccessType.ACCESS_TYPE_ONLY_ADDRESS
+                storeCode.instantiatePermissionBuilder.addAddresses(admin.address())
+                storeCode.instantiatePermissionBuilder.permission = Types.AccessType.ACCESS_TYPE_ANY_OF_ADDRESSES
                 storeCode.sender = admin.address()
                 storeCode.wasmByteCode = gzippedWasmBytes.toByteString()
             }.build().toAny().toTxBody(),
@@ -123,9 +122,8 @@ class LocalGroupMemberContractClient(
             .eventsList
             .singleOrNull { it.type == "store_code" }
             ?.attributesList
-            ?.singleOrNull { it.key.toStringUtf8() == "code_id" }
+            ?.singleOrNull { it.key == "code_id" }
             ?.value
-            ?.toStringUtf8()
             ?.toLongOrNull()
             .orThrow { IllegalStateException("Failed to derive code id from stored contract") }
     }

@@ -43,6 +43,11 @@ subprojects {
     val artifactName = "member-approval-$name"
     val artifactVersion = projectVersion.toString()
 
+
+    tasks.withType<PublishToMavenLocal> {
+        signing.isRequired = false
+    }
+
     configure<PublishingExtension> {
         publications {
             create<MavenPublication>("maven") {
