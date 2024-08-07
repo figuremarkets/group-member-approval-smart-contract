@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/util/prov_helpers.rs`."><title>prov_helpers.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="group_member_approval_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.1 (d5c2e9c34 2023-09-13)" data-channel="1.72.1" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../group_member_approval_smart_contract/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/util/prov_helpers.rs`."><title>prov_helpers.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-dd39b87e5fcfba68.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="group_member_approval_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.80.0 (051478957 2024-07-21)" data-channel="1.80.0" data-search-js="search-d52510db62a78183.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -237,13 +237,13 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_get_group_id_attribute_values_no_attributes() {
         <span class="kw">let </span>attributes = Attributes {
-            address: Addr::unchecked(<span class="string">&quot;whatever&quot;</span>),
+            address: Addr::unchecked(<span class="string">"whatever"</span>),
             attributes: <span class="macro">vec!</span>[],
         };
-        <span class="kw">let </span>resulting_values = get_group_id_attribute_values(<span class="kw-2">&amp;</span>attributes, <span class="string">&quot;some name&quot;</span>);
+        <span class="kw">let </span>resulting_values = get_group_id_attribute_values(<span class="kw-2">&amp;</span>attributes, <span class="string">"some name"</span>);
         <span class="macro">assert!</span>(
             resulting_values.is_empty(),
-            <span class="string">&quot;no values should be derived from empty attributes, but got: {:?}&quot;</span>,
+            <span class="string">"no values should be derived from empty attributes, but got: {:?}"</span>,
             resulting_values,
         );
     }
@@ -251,103 +251,103 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_get_group_id_attribute_values_single_matching_attribute() {
         <span class="kw">let </span>attributes = Attributes {
-            address: Addr::unchecked(<span class="string">&quot;whatever&quot;</span>),
+            address: Addr::unchecked(<span class="string">"whatever"</span>),
             attributes: <span class="macro">vec!</span>[Attribute {
-                name: <span class="string">&quot;idk&quot;</span>.to_string(),
+                name: <span class="string">"idk"</span>.to_string(),
                 value: get_binary_int(<span class="number">10</span>),
                 value_type: AttributeValueType::Int,
             }],
         };
-        <span class="kw">let </span>resulting_values = get_group_id_attribute_values(<span class="kw-2">&amp;</span>attributes, <span class="string">&quot;idk&quot;</span>);
+        <span class="kw">let </span>resulting_values = get_group_id_attribute_values(<span class="kw-2">&amp;</span>attributes, <span class="string">"idk"</span>);
         <span class="macro">assert_eq!</span>(
             <span class="number">1</span>,
             resulting_values.len(),
-            <span class="string">&quot;expected a single result to be derived, but got: {:?}&quot;</span>,
+            <span class="string">"expected a single result to be derived, but got: {:?}"</span>,
             resulting_values,
         );
         <span class="macro">assert_eq!</span>(
             <span class="number">10</span>,
             resulting_values.first().unwrap().u64(),
-            <span class="string">&quot;the single value in the resulting values should be correctly derived&quot;</span>,
+            <span class="string">"the single value in the resulting values should be correctly derived"</span>,
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_get_group_id_attribute_values_multiple_matching_attributes() {
         <span class="kw">let </span>attributes = Attributes {
-            address: Addr::unchecked(<span class="string">&quot;whatever&quot;</span>),
+            address: Addr::unchecked(<span class="string">"whatever"</span>),
             attributes: <span class="macro">vec!</span>[
                 Attribute {
-                    name: <span class="string">&quot;name&quot;</span>.to_string(),
+                    name: <span class="string">"name"</span>.to_string(),
                     value: get_binary_int(<span class="number">5</span>),
                     value_type: AttributeValueType::Int,
                 },
                 Attribute {
-                    name: <span class="string">&quot;name&quot;</span>.to_string(),
+                    name: <span class="string">"name"</span>.to_string(),
                     value: get_binary_int(<span class="number">12</span>),
                     value_type: AttributeValueType::Int,
                 },
                 Attribute {
-                    name: <span class="string">&quot;name&quot;</span>.to_string(),
+                    name: <span class="string">"name"</span>.to_string(),
                     value: get_binary_int(<span class="number">17</span>),
                     value_type: AttributeValueType::Int,
                 },
             ],
         };
-        <span class="kw">let </span>resulting_values = get_group_id_attribute_values(<span class="kw-2">&amp;</span>attributes, <span class="string">&quot;name&quot;</span>);
+        <span class="kw">let </span>resulting_values = get_group_id_attribute_values(<span class="kw-2">&amp;</span>attributes, <span class="string">"name"</span>);
         <span class="macro">assert_eq!</span>(
             <span class="number">3</span>,
             resulting_values.len(),
-            <span class="string">&quot;expected three results to be derived, but got: {:?}&quot;</span>,
+            <span class="string">"expected three results to be derived, but got: {:?}"</span>,
             resulting_values,
         );
         <span class="macro">assert_eq!</span>(
             <span class="number">5</span>,
             resulting_values[<span class="number">0</span>].u64(),
-            <span class="string">&quot;the first value should be correctly derived&quot;</span>,
+            <span class="string">"the first value should be correctly derived"</span>,
         );
         <span class="macro">assert_eq!</span>(
             <span class="number">12</span>,
             resulting_values[<span class="number">1</span>].u64(),
-            <span class="string">&quot;the second value should be correctly derived&quot;</span>,
+            <span class="string">"the second value should be correctly derived"</span>,
         );
         <span class="macro">assert_eq!</span>(
             <span class="number">17</span>,
             resulting_values[<span class="number">2</span>].u64(),
-            <span class="string">&quot;the third value should be correctly derived&quot;</span>,
+            <span class="string">"the third value should be correctly derived"</span>,
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_get_group_id_attribute_values_all_mismatches() {
         <span class="kw">let </span>attributes = Attributes {
-            address: Addr::unchecked(<span class="string">&quot;whatever&quot;</span>),
+            address: Addr::unchecked(<span class="string">"whatever"</span>),
             attributes: <span class="macro">vec!</span>[
                 <span class="comment">// Mismatched because it is a different name than the expected one
                 </span>Attribute {
-                    name: <span class="string">&quot;somename&quot;</span>.to_string(),
+                    name: <span class="string">"somename"</span>.to_string(),
                     value: get_binary_int(<span class="number">5</span>),
                     value_type: AttributeValueType::Int,
                 },
                 <span class="comment">// Mismatched because the serialized value is not an int
                 </span>Attribute {
-                    name: <span class="string">&quot;targetname&quot;</span>.to_string(),
-                    value: to_binary(<span class="string">&quot;not an int&quot;</span>)
-                        .expect(<span class="string">&quot;string should serialize to binary successfully&quot;</span>),
+                    name: <span class="string">"targetname"</span>.to_string(),
+                    value: to_binary(<span class="string">"not an int"</span>)
+                        .expect(<span class="string">"string should serialize to binary successfully"</span>),
                     value_type: AttributeValueType::Int,
                 },
                 <span class="comment">// Mismatched because the value type qualifier is set incorrectly
                 </span>Attribute {
-                    name: <span class="string">&quot;targetname&quot;</span>.to_string(),
+                    name: <span class="string">"targetname"</span>.to_string(),
                     value: get_binary_int(<span class="number">11</span>),
                     value_type: AttributeValueType::String,
                 },
             ],
         };
-        <span class="kw">let </span>resulting_values = get_group_id_attribute_values(<span class="kw-2">&amp;</span>attributes, <span class="string">&quot;targetname&quot;</span>);
+        <span class="kw">let </span>resulting_values = get_group_id_attribute_values(<span class="kw-2">&amp;</span>attributes, <span class="string">"targetname"</span>);
         <span class="macro">assert!</span>(
             resulting_values.is_empty(),
-            <span class="string">&quot;no values should be derived when no proper attribute values are set, but got: {:?}&quot;</span>,
+            <span class="string">"no values should be derived when no proper attribute values are set, but got: {:?}"</span>,
             resulting_values,
         );
     }
@@ -355,56 +355,56 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_get_group_id_attribute_values_some_matches_some_mismatches() {
         <span class="kw">let </span>attributes = Attributes {
-            address: Addr::unchecked(<span class="string">&quot;whatever&quot;</span>),
+            address: Addr::unchecked(<span class="string">"whatever"</span>),
             attributes: <span class="macro">vec!</span>[
                 <span class="comment">// Mismatch on name
                 </span>Attribute {
-                    name: <span class="string">&quot;othername&quot;</span>.to_string(),
+                    name: <span class="string">"othername"</span>.to_string(),
                     value: get_binary_int(<span class="number">1</span>),
                     value_type: AttributeValueType::Int,
                 },
                 <span class="comment">// Match 1
                 </span>Attribute {
-                    name: <span class="string">&quot;targetname&quot;</span>.to_string(),
+                    name: <span class="string">"targetname"</span>.to_string(),
                     value: get_binary_int(<span class="number">2</span>),
                     value_type: AttributeValueType::Int,
                 },
                 <span class="comment">// Mismatch on value type
                 </span>Attribute {
-                    name: <span class="string">&quot;targetname&quot;</span>.to_string(),
+                    name: <span class="string">"targetname"</span>.to_string(),
                     value: get_binary_int(<span class="number">3</span>),
                     value_type: AttributeValueType::Json,
                 },
                 <span class="comment">// Match 2
                 </span>Attribute {
-                    name: <span class="string">&quot;targetname&quot;</span>.to_string(),
+                    name: <span class="string">"targetname"</span>.to_string(),
                     value: get_binary_int(<span class="number">4</span>),
                     value_type: AttributeValueType::Int,
                 },
             ],
         };
-        <span class="kw">let </span>resulting_values = get_group_id_attribute_values(<span class="kw-2">&amp;</span>attributes, <span class="string">&quot;targetname&quot;</span>);
+        <span class="kw">let </span>resulting_values = get_group_id_attribute_values(<span class="kw-2">&amp;</span>attributes, <span class="string">"targetname"</span>);
         <span class="macro">assert_eq!</span>(
             <span class="number">2</span>,
             resulting_values.len(),
-            <span class="string">&quot;the resulting vector should contain two values, but got: {:?}&quot;</span>,
+            <span class="string">"the resulting vector should contain two values, but got: {:?}"</span>,
             resulting_values,
         );
         <span class="macro">assert_eq!</span>(
             <span class="number">2</span>,
             resulting_values[<span class="number">0</span>].u64(),
-            <span class="string">&quot;the first value should be correctly defined&quot;</span>,
+            <span class="string">"the first value should be correctly defined"</span>,
         );
         <span class="macro">assert_eq!</span>(
             <span class="number">4</span>,
             resulting_values[<span class="number">1</span>].u64(),
-            <span class="string">&quot;the second value should be correctly defined&quot;</span>,
+            <span class="string">"the second value should be correctly defined"</span>,
         );
     }
 
     <span class="kw">fn </span>get_binary_int(value: u64) -&gt; Binary {
         to_binary(<span class="kw-2">&amp;</span>value).expect(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-            <span class="string">&quot;Expected value [{value}] to be properly converted to binary&quot;</span>,
+            <span class="string">"Expected value [{value}] to be properly converted to binary"</span>,
         ))
     }
 }

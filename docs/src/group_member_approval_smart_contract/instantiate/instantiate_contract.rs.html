@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/instantiate/instantiate_contract.rs`."><title>instantiate_contract.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="group_member_approval_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.1 (d5c2e9c34 2023-09-13)" data-channel="1.72.1" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../group_member_approval_smart_contract/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/instantiate/instantiate_contract.rs`."><title>instantiate_contract.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-dd39b87e5fcfba68.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="group_member_approval_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.80.0 (051478957 2024-07-21)" data-channel="1.80.0" data-search-js="search-d52510db62a78183.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -248,14 +248,14 @@
 
 <span class="doccomment">/// The main functionality executed when the smart contract is first instantiated.  This creates the
 /// singleton instance of [ContractState] used to verify the attribute name used in the contract,
-/// as well as optionally binding the contract&#39;s name if it does not need to be bound after creation
+/// as well as optionally binding the contract's name if it does not need to be bound after creation
 /// due to namespace restrictions.
 ///
 /// # Parameters
 ///
 /// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
 /// resources like contract internal storage and a querier to retrieve blockchain objects.
-/// * `env` An environment object provided by the cosmwasm framework.  Describes the contract&#39;s
+/// * `env` An environment object provided by the cosmwasm framework.  Describes the contract's
 /// details, as well as blockchain information at the time of the transaction.
 /// * `info` A message information object provided by the cosmwasm framework.  Describes the sender
 /// of the instantiation message, as well as the funds provided as an amount during the transaction.
@@ -270,22 +270,22 @@
     check_funds_are_empty(<span class="kw-2">&amp;</span>info)<span class="question-mark">?</span>;
     <span class="kw">if </span>msg.contract_name.is_empty() {
         <span class="kw">return </span>ContractError::InstantiationError {
-            message: <span class="string">&quot;Provided contract name must not be empty&quot;</span>.to_string(),
+            message: <span class="string">"Provided contract name must not be empty"</span>.to_string(),
         }
         .to_err();
     }
     <span class="kw">if </span>msg.attribute_name.is_empty() {
         <span class="kw">return </span>ContractError::InstantiationError {
-            message: <span class="string">&quot;Provided attribute name must not be empty&quot;</span>.to_string(),
+            message: <span class="string">"Provided attribute name must not be empty"</span>.to_string(),
         }
         .to_err();
     }
     <span class="kw">let </span>contract_state = ContractState::new(info.sender, <span class="kw-2">&amp;</span>msg.attribute_name, <span class="kw-2">&amp;</span>msg.contract_name);
     set_contract_state(deps.storage, <span class="kw-2">&amp;</span>contract_state)<span class="question-mark">?</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>response = Response::new()
-        .add_attribute(<span class="string">&quot;action&quot;</span>, <span class="string">&quot;instantiate&quot;</span>)
-        .add_attribute(<span class="string">&quot;contract_name&quot;</span>, <span class="kw-2">&amp;</span>msg.contract_name)
-        .add_attribute(<span class="string">&quot;contract_attribute&quot;</span>, <span class="kw-2">&amp;</span>msg.attribute_name);
+        .add_attribute(<span class="string">"action"</span>, <span class="string">"instantiate"</span>)
+        .add_attribute(<span class="string">"contract_name"</span>, <span class="kw-2">&amp;</span>msg.contract_name)
+        .add_attribute(<span class="string">"contract_attribute"</span>, <span class="kw-2">&amp;</span>msg.attribute_name);
     <span class="kw">if </span>msg.bind_attribute_name {
         response = response.add_message(bind_name(
             msg.attribute_name,
@@ -314,7 +314,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_instantiate_with_provided_funds() {
         <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
-        <span class="kw">let </span>info = mock_info(DEFAULT_CONTRACT_ADMIN, <span class="kw-2">&amp;</span>coins(<span class="number">100</span>, <span class="string">&quot;nhash&quot;</span>));
+        <span class="kw">let </span>info = mock_info(DEFAULT_CONTRACT_ADMIN, <span class="kw-2">&amp;</span>coins(<span class="number">100</span>, <span class="string">"nhash"</span>));
         <span class="kw">let </span>msg = InstantiateMsg {
             contract_name: DEFAULT_CONTRACT_NAME.to_string(),
             attribute_name: DEFAULT_CONTRACT_ATTRIBUTE.to_string(),
@@ -323,7 +323,7 @@
         <span class="kw">let </span>result = instantiate_contract(deps.as_mut(), mock_env(), info, msg);
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(result, <span class="prelude-val">Err</span>(ContractError::InvalidFundsError { .. })),
-            <span class="string">&quot;an invalid funds error should occur when funds are provided to instantiation&quot;</span>,
+            <span class="string">"an invalid funds error should occur when funds are provided to instantiation"</span>,
         );
     }
 
@@ -332,14 +332,14 @@
         <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
         <span class="kw">let </span>info = mock_info(DEFAULT_CONTRACT_ADMIN, <span class="kw-2">&amp;</span>[]);
         <span class="kw">let </span>msg = InstantiateMsg {
-            contract_name: <span class="string">&quot;&quot;</span>.to_string(),
+            contract_name: <span class="string">""</span>.to_string(),
             attribute_name: DEFAULT_CONTRACT_ATTRIBUTE.to_string(),
             bind_attribute_name: <span class="bool-val">true</span>,
         };
         <span class="kw">let </span>result = instantiate_contract(deps.as_mut(), mock_env(), info, msg);
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(result, <span class="prelude-val">Err</span>(ContractError::InstantiationError { .. })),
-            <span class="string">&quot;an instantiation error should occur when an invalid contract name is used&quot;</span>,
+            <span class="string">"an instantiation error should occur when an invalid contract name is used"</span>,
         );
     }
 
@@ -349,13 +349,13 @@
         <span class="kw">let </span>info = mock_info(DEFAULT_CONTRACT_ADMIN, <span class="kw-2">&amp;</span>[]);
         <span class="kw">let </span>msg = InstantiateMsg {
             contract_name: DEFAULT_CONTRACT_NAME.to_string(),
-            attribute_name: <span class="string">&quot;&quot;</span>.to_string(),
+            attribute_name: <span class="string">""</span>.to_string(),
             bind_attribute_name: <span class="bool-val">true</span>,
         };
         <span class="kw">let </span>result = instantiate_contract(deps.as_mut(), mock_env(), info, msg);
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(result, <span class="prelude-val">Err</span>(ContractError::InstantiationError { .. })),
-            <span class="string">&quot;an instantiation error should occur when an invalid contract name is used&quot;</span>,
+            <span class="string">"an instantiation error should occur when an invalid contract name is used"</span>,
         );
     }
 
@@ -364,45 +364,45 @@
         <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
         <span class="kw">let </span>info = mock_info(DEFAULT_CONTRACT_ADMIN, <span class="kw-2">&amp;</span>[]);
         <span class="kw">let </span>msg = InstantiateMsg {
-            contract_name: <span class="string">&quot;some contract name&quot;</span>.to_string(),
-            attribute_name: <span class="string">&quot;some attribute name&quot;</span>.to_string(),
+            contract_name: <span class="string">"some contract name"</span>.to_string(),
+            attribute_name: <span class="string">"some attribute name"</span>.to_string(),
             bind_attribute_name: <span class="bool-val">false</span>,
         };
         <span class="kw">let </span>response = instantiate_contract(deps.as_mut(), mock_env(), info, msg)
-            .expect(<span class="string">&quot;the contract should be successfully instantiated&quot;</span>);
+            .expect(<span class="string">"the contract should be successfully instantiated"</span>);
         <span class="macro">assert!</span>(
             response.messages.is_empty(),
-            <span class="string">&quot;no messages should be emitted when the name binding is not requested&quot;</span>,
+            <span class="string">"no messages should be emitted when the name binding is not requested"</span>,
         );
         <span class="macro">assert_eq!</span>(
             <span class="number">3</span>,
             response.attributes.len(),
-            <span class="string">&quot;the correct number of attributes should be emitted&quot;</span>,
+            <span class="string">"the correct number of attributes should be emitted"</span>,
         );
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;instantiate&quot;</span>,
-            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">&quot;action&quot;</span>),
-            <span class="string">&quot;the action attribute in the response should be set correctly&quot;</span>,
+            <span class="string">"instantiate"</span>,
+            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">"action"</span>),
+            <span class="string">"the action attribute in the response should be set correctly"</span>,
         );
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;some contract name&quot;</span>,
-            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">&quot;contract_name&quot;</span>),
-            <span class="string">&quot;the contract_name attribute in the response should be set correctly&quot;</span>,
+            <span class="string">"some contract name"</span>,
+            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">"contract_name"</span>),
+            <span class="string">"the contract_name attribute in the response should be set correctly"</span>,
         );
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;some attribute name&quot;</span>,
-            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">&quot;contract_attribute&quot;</span>),
-            <span class="string">&quot;the contract_attribute attribute in the response should be set correctly&quot;</span>,
+            <span class="string">"some attribute name"</span>,
+            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">"contract_attribute"</span>),
+            <span class="string">"the contract_attribute attribute in the response should be set correctly"</span>,
         );
         <span class="kw">let </span>contract_state = get_contract_state(deps.as_ref().storage)
-            .expect(<span class="string">&quot;a contract state record should be available after instantiation&quot;</span>);
+            .expect(<span class="string">"a contract state record should be available after instantiation"</span>);
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;some contract name&quot;</span>, <span class="kw-2">&amp;</span>contract_state.contract_name,
-            <span class="string">&quot;the supplied contract name should be used in the contract state&quot;</span>,
+            <span class="string">"some contract name"</span>, <span class="kw-2">&amp;</span>contract_state.contract_name,
+            <span class="string">"the supplied contract name should be used in the contract state"</span>,
         );
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;some attribute name&quot;</span>, <span class="kw-2">&amp;</span>contract_state.attribute_name,
-            <span class="string">&quot;the supplied attribute name should be used in the contract state&quot;</span>,
+            <span class="string">"some attribute name"</span>, <span class="kw-2">&amp;</span>contract_state.attribute_name,
+            <span class="string">"the supplied attribute name should be used in the contract state"</span>,
         );
     }
 
@@ -411,16 +411,16 @@
         <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
         <span class="kw">let </span>info = mock_info(DEFAULT_CONTRACT_ADMIN, <span class="kw-2">&amp;</span>[]);
         <span class="kw">let </span>msg = InstantiateMsg {
-            contract_name: <span class="string">&quot;some contract name&quot;</span>.to_string(),
-            attribute_name: <span class="string">&quot;some attribute name&quot;</span>.to_string(),
+            contract_name: <span class="string">"some contract name"</span>.to_string(),
+            attribute_name: <span class="string">"some attribute name"</span>.to_string(),
             bind_attribute_name: <span class="bool-val">true</span>,
         };
         <span class="kw">let </span>response = instantiate_contract(deps.as_mut(), mock_env(), info, msg)
-            .expect(<span class="string">&quot;the contract should be successfully instantiated&quot;</span>);
+            .expect(<span class="string">"the contract should be successfully instantiated"</span>);
         <span class="macro">assert_eq!</span>(
             <span class="number">1</span>,
             response.messages.len(),
-            <span class="string">&quot;a single message should be emitted when name binding is requested&quot;</span>,
+            <span class="string">"a single message should be emitted when name binding is requested"</span>,
         );
         <span class="kw">let </span>message = response.messages.first().unwrap();
         <span class="kw">match </span><span class="kw-2">&amp;</span>message.msg {
@@ -434,47 +434,47 @@
                 ..
             }) =&gt; {
                 <span class="macro">assert_eq!</span>(
-                    <span class="string">&quot;some attribute name&quot;</span>, name,
-                    <span class="string">&quot;the provided attribute name should be used in the name binding msg&quot;</span>,
+                    <span class="string">"some attribute name"</span>, name,
+                    <span class="string">"the provided attribute name should be used in the name binding msg"</span>,
                 );
                 <span class="macro">assert_eq!</span>(
                     MOCK_CONTRACT_ADDR,
                     address.as_str(),
-                    <span class="string">&quot;the contract address should be used as the bound address for the name&quot;</span>,
+                    <span class="string">"the contract address should be used as the bound address for the name"</span>,
                 );
-                <span class="macro">assert!</span>(restrict, <span class="string">&quot;the newly bound name should be restricted&quot;</span>,);
+                <span class="macro">assert!</span>(restrict, <span class="string">"the newly bound name should be restricted"</span>,);
             }
-            msg =&gt; <span class="macro">panic!</span>(<span class="string">&quot;unexpected msg type emitted from instantiate: {:?}&quot;</span>, msg),
+            msg =&gt; <span class="macro">panic!</span>(<span class="string">"unexpected msg type emitted from instantiate: {:?}"</span>, msg),
         }
         <span class="macro">assert_eq!</span>(
             <span class="number">3</span>,
             response.attributes.len(),
-            <span class="string">&quot;the correct number of attributes should be emitted&quot;</span>,
+            <span class="string">"the correct number of attributes should be emitted"</span>,
         );
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;instantiate&quot;</span>,
-            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">&quot;action&quot;</span>),
-            <span class="string">&quot;the action attribute in the response should be set correctly&quot;</span>,
+            <span class="string">"instantiate"</span>,
+            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">"action"</span>),
+            <span class="string">"the action attribute in the response should be set correctly"</span>,
         );
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;some contract name&quot;</span>,
-            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">&quot;contract_name&quot;</span>),
-            <span class="string">&quot;the contract_name attribute in the response should be set correctly&quot;</span>,
+            <span class="string">"some contract name"</span>,
+            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">"contract_name"</span>),
+            <span class="string">"the contract_name attribute in the response should be set correctly"</span>,
         );
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;some attribute name&quot;</span>,
-            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">&quot;contract_attribute&quot;</span>),
-            <span class="string">&quot;the contract_attribute attribute in the response should be set correctly&quot;</span>,
+            <span class="string">"some attribute name"</span>,
+            single_attribute_for_key(<span class="kw-2">&amp;</span>response, <span class="string">"contract_attribute"</span>),
+            <span class="string">"the contract_attribute attribute in the response should be set correctly"</span>,
         );
         <span class="kw">let </span>contract_state = get_contract_state(deps.as_ref().storage)
-            .expect(<span class="string">&quot;a contract state record should be available after instantiation&quot;</span>);
+            .expect(<span class="string">"a contract state record should be available after instantiation"</span>);
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;some contract name&quot;</span>, <span class="kw-2">&amp;</span>contract_state.contract_name,
-            <span class="string">&quot;the supplied contract name should be used in the contract state&quot;</span>,
+            <span class="string">"some contract name"</span>, <span class="kw-2">&amp;</span>contract_state.contract_name,
+            <span class="string">"the supplied contract name should be used in the contract state"</span>,
         );
         <span class="macro">assert_eq!</span>(
-            <span class="string">&quot;some attribute name&quot;</span>, <span class="kw-2">&amp;</span>contract_state.attribute_name,
-            <span class="string">&quot;the supplied attribute name should be used in the contract state&quot;</span>,
+            <span class="string">"some attribute name"</span>, <span class="kw-2">&amp;</span>contract_state.attribute_name,
+            <span class="string">"the supplied attribute name should be used in the contract state"</span>,
         );
     }
 }
