@@ -61,7 +61,7 @@ jobs:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Get Release Version
         run: |
@@ -93,12 +93,12 @@ jobs:
 
       - name: Publish to Maven Central
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_ACCESS_TOKEN_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_ACCESS_TOKEN_PASSWORD }}
         run: |
           echo "Publishing release for version [$RELEASE_VERSION]"
           ./kotlin-tools/gradlew publishToSonatype $(if [ "${{github.event.release.prerelease}}" = "true" ]; then echo 'closeSonatypeStagingRepository'; else echo 'closeAndReleaseSonatypeStagingRepository'; fi) \
             -Pversion=$RELEASE_VERSION \
-            -Psigning.keyId=69C08EA0 -Psigning.password="${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}" -Psigning.secretKeyRingFile=$GITHUB_WORKSPACE/release.gpg \
+            -Psigning.keyId="${{ secrets.OSSRH_GPG_SECRET_KEY_ID }}" -Psigning.password="${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}" -Psigning.secretKeyRingFile=$GITHUB_WORKSPACE/release.gpg \
             --info \
             --project-dir ./kotlin-tools
