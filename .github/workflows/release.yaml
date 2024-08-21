@@ -93,8 +93,8 @@ jobs:
 
       - name: Publish to Maven Central
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_ACCESS_TOKEN_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_ACCESS_TOKEN_PASSWORD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
           echo "Publishing release for version [$RELEASE_VERSION]"
           ./kotlin-tools/gradlew publishToSonatype $(if [ "${{github.event.release.prerelease}}" = "true" ]; then echo 'closeSonatypeStagingRepository'; else echo 'closeAndReleaseSonatypeStagingRepository'; fi) \
