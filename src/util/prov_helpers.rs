@@ -15,7 +15,7 @@ use crate::types::core::error::ContractError;
 ///
 /// # Parameters
 ///
-/// * `attributes` Attributes fetched via a chain query.
+/// * `attributes` Pages of Attributes fetched via a chain query.
 /// * `name` A [Provenance Blockchain Name Module](https://docs.provenance.io/modules/name-module)
 /// name used to write the attribute.
 pub fn get_group_id_attribute_values_paginated<S: Into<String>>(
@@ -32,6 +32,14 @@ pub fn get_group_id_attribute_values_paginated<S: Into<String>>(
         .collect()
 }
 
+/// Parses all group ids from the [Provenance Blockchain Attributes](https://docs.provenance.io/modules/account)
+/// provided by filtering for all values that match the given name and have an assigned int value.
+///
+/// # Parameters
+///
+/// * `attributes` Attributes fetched via a chain query.
+/// * `name` A [Provenance Blockchain Name Module](https://docs.provenance.io/modules/name-module)
+/// name used to write the attribute.
 pub fn get_group_id_attribute_values<S: Into<String>>(
     attributes: &QueryAttributesResponse,
     name: S,
@@ -112,6 +120,11 @@ fn build_page_request(key: Vec<u8>) -> Option<PageRequest> {
     })
 }
 
+/// Fetches all attributes for an address, handling paging as appropriate
+/// 
+/// # Parameters
+/// * `querier` The Provenance Blockchain AttributeQuerier to use for fetching pages of attributes
+/// * `address` The address to fetch attributes on
 pub fn get_all_attributes<Q: CustomQuery, S1: Into<String> + Copy>(
     querier: AttributeQuerier<Q>,
     address: S1,
@@ -136,13 +149,124 @@ pub fn get_all_attributes<Q: CustomQuery, S1: Into<String> + Copy>(
 #[cfg(test)]
 mod tests {
     use crate::{
+        test::test_constants::{DEFAULT_CONTRACT_ATTRIBUTE, DEFAULT_GROUP_MEMBER},
         types::core::error::ContractError,
         util::prov_helpers::{get_group_id_attribute_values, msg_bind_name},
     };
-    use cosmwasm_std::to_json_vec;
-    use provwasm_std::types::provenance::attribute::v1::{
-        Attribute, AttributeType, QueryAttributesResponse,
+    use cosmwasm_std::{from_json, to_json_vec, Binary, ContractResult, SystemResult};
+    use provwasm_mocks::{mock_provenance_dependencies, MockProvenanceQuerier};
+    use provwasm_std::types::{
+        cosmos::base::query::v1beta1::{PageRequest, PageResponse},
+        provenance::attribute::v1::{
+            Attribute, AttributeQuerier, AttributeType, QueryAttributesRequest,
+            QueryAttributesResponse,
+        },
+        tendermint::abci::ResponseQuery,
     };
+
+    use super::get_all_attributes;
+
+    /// Helper function to handle returning mocked responses with pagination, where the key is a json-encoded string of the next page index
+    fn mock_paged_attributes(
+        querier: &mut MockProvenanceQuerier,
+        account: &'static str,
+        pages: Vec<Vec<Attribute>>,
+    ) {
+        querier.registered_custom_queries.insert(
+            "/provenance.attribute.v1.Query/Attributes".into(),
+            Box::new(move |binary: &Binary| {
+                let request = QueryAttributesRequest::try_from(binary.clone()).unwrap();
+                let idx = match request.pagination {
+                    None => 0,
+                    Some(PageRequest { key, .. }) => {
+                        if key.len() == 0 {
+                            0
+                        } else {
+                            from_json(key).unwrap_or(0)
+                        }
+                    }
+                };
+                let page = pages.get(idx).expect(&format!(
+                    "Expected to be able to fetch page {} of attributes",
+                    idx
+                ));
+                let response = QueryAttributesResponse {
+                    account: account.into(),
+                    attributes: page.to_vec(),
+                    pagination: if idx < pages.len() - 1 {
+                        Some(PageResponse {
+                            next_key: Some(
+                                to_json_vec::<usize>(&(idx + 1))
+                                    .expect("Failed to serialize pagination index to vector"),
+                            ),
+                            total: pages.iter().fold(0, |acc, attrs| acc + attrs.len() as u64),
+                        })
+                    } else {
+                        None
+                    },
+                };
+                SystemResult::Ok(ContractResult::Ok(Binary::new(
+                    ResponseQuery {
+                        code: 0,
+                        log: "".into(),
+                        info: "".into(),
+                        index: 0,
+                        key: vec![],
+                        value: response.to_proto_bytes(),
+                        proof_ops: None,
+                        height: 1234,
+                        codespace: "".into(),
+                    }
+                    .to_proto_bytes(),
+                )))
+            }),
+        );
+    }
+
+    #[test]
+    fn get_all_attributes_paginates_properly() {
+        let mut deps = mock_provenance_dependencies();
+        let address = "someaddress";
+        mock_paged_attributes(
+            &mut deps.querier,
+            address,
+            vec![
+                vec![Attribute {
+                    name: DEFAULT_CONTRACT_ATTRIBUTE.into(),
+                    value: to_json_vec(&1u64).unwrap(),
+                    attribute_type: AttributeType::Int.into(),
+                    address: DEFAULT_GROUP_MEMBER.into(),
+                    expiration_date: None,
+                }],
+                vec![Attribute {
+                    name: DEFAULT_CONTRACT_ATTRIBUTE.into(),
+                    value: to_json_vec(&2u64).unwrap(),
+                    attribute_type: AttributeType::Int.into(),
+                    address: DEFAULT_GROUP_MEMBER.into(),
+                    expiration_date: None,
+                }],
+            ],
+        );
+        let all_attributes =
+            get_all_attributes(AttributeQuerier::new(&deps.as_mut().querier), address)
+                .expect("expected get_all_attributes to successfully respond");
+        assert_eq!(
+            2,
+            all_attributes.len(),
+            "expected two pages for all attributes"
+        );
+        let mut attribute_values = all_attributes
+            .iter()
+            .flat_map(|attrs| attrs.attributes.to_owned())
+            .map(|attr| from_json::<u64>(attr.value).expect("Failed to parse value to integer"))
+            .collect::<Vec<_>>();
+        attribute_values.sort();
+        assert_eq!(
+            vec![1u64, 2u64],
+            attribute_values,
+            "Expected all attributes to be present"
+        )
+    }
 
     #[test]
     fn test_get_group_id_attribute_values_no_attributes() {
