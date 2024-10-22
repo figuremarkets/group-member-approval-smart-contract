@@ -20,6 +20,13 @@ pub enum ContractError {
         message: String,
     },
 
+    /// An error that occurs when an invalid text format is detected.
+    #[error("invalid format: {message}")]
+    InvalidFormatError {
+        /// A free-form message describing the nature of the error.
+        message: String,
+    },
+
     /// Occurs when the account invoking a contract route provides an incorrect amount of funds.
     #[error("Invalid funds: {message}")]
     InvalidFundsError {

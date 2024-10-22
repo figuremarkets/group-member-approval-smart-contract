@@ -2,8 +2,7 @@ use crate::store::contract_state::{
     get_contract_state, set_contract_state, ContractState, CONTRACT_TYPE, CONTRACT_VERSION,
 };
 use crate::types::core::error::ContractError;
-use cosmwasm_std::{to_binary, DepsMut, Response};
-use provwasm_std::{ProvenanceMsg, ProvenanceQuery};
+use cosmwasm_std::{to_json_binary, DepsMut, Response};
 use result_extensions::ResultExtensions;
 use semver::Version;
 
@@ -16,9 +15,7 @@ use semver::Version;
 ///
 /// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
 /// resources like contract internal storage and a querier to retrieve blockchain objects.
-pub fn contract_upgrade(
-    deps: DepsMut<ProvenanceQuery>,
-) -> Result<Response<ProvenanceMsg>, ContractError> {
+pub fn contract_upgrade(deps: DepsMut) -> Result<Response, ContractError> {
     let mut contract_state = get_contract_state(deps.storage)?;
     check_valid_migration(&contract_state)?;
     contract_state.contract_version = CONTRACT_VERSION.to_string();
@@ -26,7 +23,7 @@ pub fn contract_upgrade(
     Response::new()
         .add_attribute("action", "migrate_contract")
         .add_attribute("new_version", CONTRACT_VERSION)
-        .set_data(to_binary(&contract_state)?)
+        .set_data(to_json_binary(&contract_state)?)
         .to_ok()
 }
 
@@ -64,6 +61,8 @@ fn check_valid_migration(contract_state: &ContractState) -> Result<(), ContractE
 
 #[cfg(test)]
 mod tests {
+    use provwasm_mocks::mock_provenance_dependencies;
+
     use crate::migrate::contract_upgrade::contract_upgrade;
     use crate::store::contract_state::{
         get_contract_state, set_contract_state, CONTRACT_TYPE, CONTRACT_VERSION,
@@ -71,11 +70,10 @@ mod tests {
     use crate::test::test_helpers::single_attribute_for_key;
     use crate::test::test_instantiate::test_instantiate;
     use crate::types::core::error::ContractError;
-    use provwasm_mocks::mock_dependencies;
 
     #[test]
     fn test_successful_migration() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_provenance_dependencies();
         test_instantiate(deps.as_mut());
         let mut contract_state = get_contract_state(deps.as_ref().storage)
             .expect("contract state should load after instantiation");
@@ -121,7 +119,7 @@ mod tests {
 
     #[test]
     fn test_invalid_migration_scenarios() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_provenance_dependencies();
         test_instantiate(deps.as_mut());
         let mut contract_state = get_contract_state(deps.as_ref().storage)
             .expect("expected contract state to load after instantiation");

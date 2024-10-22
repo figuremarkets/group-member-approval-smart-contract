@@ -1,9 +1,9 @@
 use crate::store::contract_state::{set_contract_state, ContractState};
 use crate::types::core::error::ContractError;
 use crate::types::core::msg::InstantiateMsg;
+use crate::util::prov_helpers::msg_bind_name;
 use crate::util::route_helpers::check_funds_are_empty;
 use cosmwasm_std::{DepsMut, Env, MessageInfo, Response};
-use provwasm_std::{bind_name, NameBinding, ProvenanceMsg, ProvenanceQuery};
 use result_extensions::ResultExtensions;
 
 /// The main functionality executed when the smart contract is first instantiated.  This creates the
@@ -22,11 +22,11 @@ use result_extensions::ResultExtensions;
 /// * `msg` A custom instantiation message defined by this contract for creating the initial
 /// configuration used by the contract.
 pub fn instantiate_contract(
-    deps: DepsMut<ProvenanceQuery>,
+    deps: DepsMut,
     env: Env,
     info: MessageInfo,
     msg: InstantiateMsg,
-) -> Result<Response<ProvenanceMsg>, ContractError> {
+) -> Result<Response, ContractError> {
     check_funds_are_empty(&info)?;
     if msg.contract_name.is_empty() {
         return ContractError::InstantiationError {
@@ -47,10 +47,10 @@ pub fn instantiate_contract(
         .add_attribute("contract_name", &msg.contract_name)
         .add_attribute("contract_attribute", &msg.attribute_name);
     if msg.bind_attribute_name {
-        response = response.add_message(bind_name(
+        response = response.add_message(msg_bind_name(
             msg.attribute_name,
             env.contract.address,
-            NameBinding::Restricted,
+            true,
         )?);
     }
     response.to_ok()
@@ -66,15 +66,18 @@ mod tests {
     use crate::test::test_helpers::single_attribute_for_key;
     use crate::types::core::error::ContractError;
     use crate::types::core::msg::InstantiateMsg;
-    use cosmwasm_std::testing::{mock_env, mock_info, MOCK_CONTRACT_ADDR};
-    use cosmwasm_std::{coins, CosmosMsg};
-    use provwasm_mocks::mock_dependencies;
-    use provwasm_std::{NameMsgParams, ProvenanceMsg, ProvenanceMsgParams};
+    use cosmwasm_std::testing::{message_info, mock_env, MOCK_CONTRACT_ADDR};
+    use cosmwasm_std::{coins, Addr, AnyMsg, CosmosMsg};
+    use provwasm_mocks::mock_provenance_dependencies;
+    use provwasm_std::types::provenance::name::v1::MsgBindNameRequest;
 
     #[test]
     fn test_instantiate_with_provided_funds() {
-        let mut deps = mock_dependencies(&[]);
-        let info = mock_info(DEFAULT_CONTRACT_ADMIN, &coins(100, "nhash"));
+        let mut deps = mock_provenance_dependencies();
+        let info = message_info(
+            &Addr::unchecked(DEFAULT_CONTRACT_ADMIN),
+            &coins(100, "nhash"),
+        );
         let msg = InstantiateMsg {
             contract_name: DEFAULT_CONTRACT_NAME.to_string(),
             attribute_name: DEFAULT_CONTRACT_ATTRIBUTE.to_string(),
@@ -89,8 +92,8 @@ mod tests {
 
     #[test]
     fn test_instantiate_with_invalid_contract_name() {
-        let mut deps = mock_dependencies(&[]);
-        let info = mock_info(DEFAULT_CONTRACT_ADMIN, &[]);
+        let mut deps = mock_provenance_dependencies();
+        let info = message_info(&Addr::unchecked(DEFAULT_CONTRACT_ADMIN), &[]);
         let msg = InstantiateMsg {
             contract_name: "".to_string(),
             attribute_name: DEFAULT_CONTRACT_ATTRIBUTE.to_string(),
@@ -105,8 +108,8 @@ mod tests {
 
     #[test]
     fn test_instantiate_with_invalid_attribute_name() {
-        let mut deps = mock_dependencies(&[]);
-        let info = mock_info(DEFAULT_CONTRACT_ADMIN, &[]);
+        let mut deps = mock_provenance_dependencies();
+        let info = message_info(&Addr::unchecked(DEFAULT_CONTRACT_ADMIN), &[]);
         let msg = InstantiateMsg {
             contract_name: DEFAULT_CONTRACT_NAME.to_string(),
             attribute_name: "".to_string(),
@@ -121,8 +124,8 @@ mod tests {
 
     #[test]
     fn test_valid_instantiate_without_binding_name() {
-        let mut deps = mock_dependencies(&[]);
-        let info = mock_info(DEFAULT_CONTRACT_ADMIN, &[]);
+        let mut deps = mock_provenance_dependencies();
+        let info = message_info(&Addr::unchecked(DEFAULT_CONTRACT_ADMIN), &[]);
         let msg = InstantiateMsg {
             contract_name: "some contract name".to_string(),
             attribute_name: "some attribute name".to_string(),
@@ -168,8 +171,8 @@ mod tests {
 
     #[test]
     fn test_valid_instantiate_with_bind_name() {
-        let mut deps = mock_dependencies(&[]);
-        let info = mock_info(DEFAULT_CONTRACT_ADMIN, &[]);
+        let mut deps = mock_provenance_dependencies();
+        let info = message_info(&Addr::unchecked(DEFAULT_CONTRACT_ADMIN), &[]);
         let msg = InstantiateMsg {
             contract_name: "some contract name".to_string(),
             attribute_name: "some attribute name".to_string(),
@@ -184,25 +187,24 @@ mod tests {
         );
         let message = response.messages.first().unwrap();
         match &message.msg {
-            CosmosMsg::Custom(ProvenanceMsg {
-                params:
-                    ProvenanceMsgParams::Name(NameMsgParams::BindName {
-                        name,
-                        address,
-                        restrict,
-                    }),
-                ..
-            }) => {
+            CosmosMsg::Any(AnyMsg { type_url: _, value }) => {
+                let name_bind = MsgBindNameRequest::try_from(value.to_owned())
+                    .expect("expected the name msg binary to deserialize correctly");
+                let record = name_bind
+                    .record
+                    .expect("expected the MsgBindNameRequest to contain a record node");
                 assert_eq!(
-                    "some attribute name", name,
+                    "some attribute name", record.name,
                     "the provided attribute name should be used in the name binding msg",
                 );
                 assert_eq!(
-                    MOCK_CONTRACT_ADDR,
-                    address.as_str(),
+                    MOCK_CONTRACT_ADDR, record.address,
                     "the contract address should be used as the bound address for the name",
                 );
-                assert!(restrict, "the newly bound name should be restricted",);
+                assert!(
+                    record.restricted,
+                    "the newly bound name should be restricted",
+                );
             }
             msg => panic!("unexpected msg type emitted from instantiate: {:?}", msg),
         }

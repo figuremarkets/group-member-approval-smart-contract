@@ -97,11 +97,11 @@ mod tests {
         DEFAULT_CONTRACT_ADMIN, DEFAULT_CONTRACT_ATTRIBUTE, DEFAULT_CONTRACT_NAME,
     };
     use cosmwasm_std::Addr;
-    use provwasm_mocks::mock_dependencies;
+    use provwasm_mocks::mock_provenance_dependencies;
 
     #[test]
     pub fn test_set_and_get_contract_state() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_provenance_dependencies();
         set_contract_state(
             &mut deps.storage,
             &ContractState::new(
