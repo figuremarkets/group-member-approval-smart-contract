@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/migrate/contract_upgrade.rs`."><title>contract_upgrade.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-dd39b87e5fcfba68.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="group_member_approval_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.80.0 (051478957 2024-07-21)" data-channel="1.80.0" data-search-js="search-d52510db62a78183.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/migrate/contract_upgrade.rs`."><title>contract_upgrade.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c5d6553a23f1e5a6.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="group_member_approval_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.81.0 (eeb90cda1 2024-09-04)" data-channel="1.81.0" data-search-js="search-d234aafac6c221dd.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-d2fab2bf619172d3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -157,14 +157,11 @@
 <a href="#157" id="157">157</a>
 <a href="#158" id="158">158</a>
 <a href="#159" id="159">159</a>
-<a href="#160" id="160">160</a>
-<a href="#161" id="161">161</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::store::contract_state::{
     get_contract_state, set_contract_state, ContractState, CONTRACT_TYPE, CONTRACT_VERSION,
 };
 <span class="kw">use </span><span class="kw">crate</span>::types::core::error::ContractError;
-<span class="kw">use </span>cosmwasm_std::{to_binary, DepsMut, Response};
-<span class="kw">use </span>provwasm_std::{ProvenanceMsg, ProvenanceQuery};
+<span class="kw">use </span>cosmwasm_std::{to_json_binary, DepsMut, Response};
 <span class="kw">use </span>result_extensions::ResultExtensions;
 <span class="kw">use </span>semver::Version;
 
@@ -177,9 +174,7 @@
 ///
 /// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
 /// resources like contract internal storage and a querier to retrieve blockchain objects.
-</span><span class="kw">pub fn </span>contract_upgrade(
-    deps: DepsMut&lt;ProvenanceQuery&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Response&lt;ProvenanceMsg&gt;, ContractError&gt; {
+</span><span class="kw">pub fn </span>contract_upgrade(deps: DepsMut) -&gt; <span class="prelude-ty">Result</span>&lt;Response, ContractError&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>contract_state = get_contract_state(deps.storage)<span class="question-mark">?</span>;
     check_valid_migration(<span class="kw-2">&amp;</span>contract_state)<span class="question-mark">?</span>;
     contract_state.contract_version = CONTRACT_VERSION.to_string();
@@ -187,7 +182,7 @@
     Response::new()
         .add_attribute(<span class="string">"action"</span>, <span class="string">"migrate_contract"</span>)
         .add_attribute(<span class="string">"new_version"</span>, CONTRACT_VERSION)
-        .set_data(to_binary(<span class="kw-2">&amp;</span>contract_state)<span class="question-mark">?</span>)
+        .set_data(to_json_binary(<span class="kw-2">&amp;</span>contract_state)<span class="question-mark">?</span>)
         .to_ok()
 }
 
@@ -225,6 +220,8 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
+    <span class="kw">use </span>provwasm_mocks::mock_provenance_dependencies;
+
     <span class="kw">use </span><span class="kw">crate</span>::migrate::contract_upgrade::contract_upgrade;
     <span class="kw">use </span><span class="kw">crate</span>::store::contract_state::{
         get_contract_state, set_contract_state, CONTRACT_TYPE, CONTRACT_VERSION,
@@ -232,11 +229,10 @@
     <span class="kw">use </span><span class="kw">crate</span>::test::test_helpers::single_attribute_for_key;
     <span class="kw">use </span><span class="kw">crate</span>::test::test_instantiate::test_instantiate;
     <span class="kw">use </span><span class="kw">crate</span>::types::core::error::ContractError;
-    <span class="kw">use </span>provwasm_mocks::mock_dependencies;
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_successful_migration() {
-        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
+        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies();
         test_instantiate(deps.as_mut());
         <span class="kw">let </span><span class="kw-2">mut </span>contract_state = get_contract_state(deps.as_ref().storage)
             .expect(<span class="string">"contract state should load after instantiation"</span>);
@@ -282,7 +278,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_invalid_migration_scenarios() {
-        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
+        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies();
         test_instantiate(deps.as_mut());
         <span class="kw">let </span><span class="kw-2">mut </span>contract_state = get_contract_state(deps.as_ref().storage)
             .expect(<span class="string">"expected contract state to load after instantiation"</span>);
