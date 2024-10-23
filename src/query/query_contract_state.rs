@@ -1,7 +1,6 @@
 use crate::store::contract_state::get_contract_state;
 use crate::types::core::error::ContractError;
-use cosmwasm_std::{to_binary, Binary, Deps};
-use provwasm_std::ProvenanceQuery;
+use cosmwasm_std::{to_json_binary, Binary, Deps};
 use result_extensions::ResultExtensions;
 
 /// Fetches the current values within the [ContractState](crate::store::contract_state::ContractState).
@@ -10,8 +9,8 @@ use result_extensions::ResultExtensions;
 ///
 /// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
 /// resources like contract internal storage and a querier to retrieve blockchain objects.
-pub fn query_contract_state(deps: Deps<ProvenanceQuery>) -> Result<Binary, ContractError> {
-    to_binary(&get_contract_state(deps.storage)?)?.to_ok()
+pub fn query_contract_state(deps: Deps) -> Result<Binary, ContractError> {
+    to_json_binary(&get_contract_state(deps.storage)?)?.to_ok()
 }
 
 #[cfg(test)]
@@ -22,12 +21,12 @@ mod tests {
         DEFAULT_CONTRACT_ADMIN, DEFAULT_CONTRACT_ATTRIBUTE, DEFAULT_CONTRACT_NAME,
     };
     use crate::types::core::error::ContractError;
-    use cosmwasm_std::{from_binary, Addr};
-    use provwasm_mocks::mock_dependencies;
+    use cosmwasm_std::{from_json, Addr};
+    use provwasm_mocks::mock_provenance_dependencies;
 
     #[test]
     fn test_query_when_missing_contract_state() {
-        let deps = mock_dependencies(&[]);
+        let deps = mock_provenance_dependencies();
         let result = query_contract_state(deps.as_ref());
         assert!(
             matches!(result, Err(ContractError::StorageError { .. })),
@@ -37,7 +36,7 @@ mod tests {
 
     #[test]
     fn test_query_when_contract_state_available() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_provenance_dependencies();
         let contract_state = ContractState::new(
             Addr::unchecked(DEFAULT_CONTRACT_ADMIN),
             DEFAULT_CONTRACT_ATTRIBUTE,
@@ -47,7 +46,7 @@ mod tests {
             .expect("contract state should be successfully stored");
         let result_binary = query_contract_state(deps.as_ref())
             .expect("contract state should be successfully derived");
-        let result_contract_state = from_binary::<ContractState>(&result_binary)
+        let result_contract_state = from_json::<ContractState>(&result_binary)
             .expect("the contract state should successfully deserialize from binary");
         assert_eq!(
             contract_state, result_contract_state,

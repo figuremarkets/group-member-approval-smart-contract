@@ -1,7 +1,7 @@
 [package]
 name = "group-member-approval-smart-contract"
-version = "1.0.2"
-authors = ["Jake Schwartz <jschwartz@figure.com>", "Pierce Trey <ptrey@figure.com>"]
+version = "1.0.3"
+authors = ["Jake Schwartz <jschwartz@figuremarkets.com>", "Pierce Trey <ptrey@figuremarkets.com>"]
 edition = "2021"
 
 exclude = [
@@ -24,16 +24,16 @@ incremental = false
 overflow-checks = true
 
 [dependencies]
-cosmwasm-std = { version = "=1.1.9", default-features = false }
+cosmwasm-std = { version = "=2.1.3", default-features = false, features = ["cosmwasm_2_1", "stargate", "std"] }
 cosmwasm-storage = "=1.1.9"
-cw-storage-plus = "=0.16.0"
-provwasm-std = "=1.1.2"
+cw-storage-plus = "=2.0.0"
+provwasm-std = "=2.4.0"
 result-extensions = "=1.0.2"
-schemars = "=0.8.12"
+schemars = "=0.8.16"
 semver = "=1.0.16"
-serde = { version = "=1.0.152", default-features = false, features = ["derive"] }
-thiserror = "=1.0.39"
+serde = { version = "=1.0.197", default-features = false, features = ["derive"] }
+thiserror = "=1.0.58"
 
 [dev-dependencies]
 cosmwasm-schema = "=1.1.9"
-provwasm-mocks = "=1.1.2"
+provwasm-mocks = "=2.4.0"

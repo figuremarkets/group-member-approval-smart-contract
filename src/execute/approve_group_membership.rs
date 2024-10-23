@@ -1,10 +1,10 @@
-use crate::store::contract_state::get_contract_state;
 use crate::types::core::error::ContractError;
-use crate::util::prov_helpers::get_group_id_attribute_values;
+use crate::util::prov_helpers::get_group_id_attribute_values_paginated;
 use crate::util::route_helpers::check_funds_are_empty;
-use cosmwasm_std::{to_binary, DepsMut, MessageInfo, Response, Uint64};
-use provwasm_std::{
-    add_attribute, AttributeValueType, ProvenanceMsg, ProvenanceQuerier, ProvenanceQuery,
+use crate::{store::contract_state::get_contract_state, util::prov_helpers::get_all_attributes};
+use cosmwasm_std::{to_json_vec, DepsMut, Env, MessageInfo, Response, Uint64};
+use provwasm_std::types::provenance::attribute::v1::{
+    AttributeQuerier, AttributeType, MsgAddAttributeRequest,
 };
 use result_extensions::ResultExtensions;
 
@@ -28,19 +28,22 @@ use result_extensions::ResultExtensions;
 /// * `group_id` The unique identifier of a given group for which the signing account consents to
 /// membership.
 pub fn approve_group_membership(
-    deps: DepsMut<ProvenanceQuery>,
+    deps: DepsMut,
+    env: Env,
     info: MessageInfo,
     group_id: Uint64,
-) -> Result<Response<ProvenanceMsg>, ContractError> {
+) -> Result<Response, ContractError> {
     // Verify that no coin was sent to start this execution route.  The only charge incurred should
     // be a new attribute write
     check_funds_are_empty(&info)?;
     let attribute_name = get_contract_state(deps.storage)?.attribute_name;
-    let existing_group_ids = ProvenanceQuerier::new(&deps.querier)
-        .get_attributes(info.sender.clone(), Some(attribute_name.clone()))
-        .ok()
-        .map(|attributes| get_group_id_attribute_values(&attributes, &attribute_name))
-        .unwrap_or_default();
+    let existing_group_ids = get_all_attributes(
+        AttributeQuerier::new(&deps.querier),
+        &info.sender.clone().into_string(),
+    )
+    .ok()
+    .map(|attributes| get_group_id_attribute_values_paginated(attributes, &attribute_name))
+    .unwrap_or_default();
     // First, verify that this member has not yet approved itself for this group.  Duplicate ids
     // would be a waste of hash and needlessly increase data storage on chain
     if existing_group_ids
@@ -58,12 +61,14 @@ pub fn approve_group_membership(
         .to_err();
     }
     Response::new()
-        .add_message(add_attribute(
-            info.sender.clone(),
-            &attribute_name,
-            to_binary(&group_id.u64())?,
-            AttributeValueType::Int,
-        )?)
+        .add_message(MsgAddAttributeRequest {
+            name: attribute_name.clone(),
+            value: to_json_vec(&group_id.u64())?,
+            attribute_type: AttributeType::Int.into(),
+            account: info.sender.clone().into_string(),
+            owner: env.contract.address.into_string(),
+            expiration_date: None,
+        })
         .add_attribute("action", "approve_group_membership")
         .add_attribute("account_address", info.sender.as_str())
         .add_attribute("attribute_name", &attribute_name)
@@ -78,18 +83,20 @@ mod tests {
     use crate::test::test_helpers::single_attribute_for_key;
     use crate::test::test_instantiate::test_instantiate;
     use crate::types::core::error::ContractError;
-    use cosmwasm_std::testing::mock_info;
-    use cosmwasm_std::{coins, from_binary, CosmosMsg, Response, Uint64};
-    use provwasm_mocks::mock_dependencies;
-    use provwasm_std::AttributeMsgParams::AddAttribute;
-    use provwasm_std::{AttributeValueType, ProvenanceMsg, ProvenanceMsgParams};
+    use cosmwasm_std::testing::{message_info, mock_env};
+    use cosmwasm_std::{coins, from_json, to_json_vec, Addr, AnyMsg, CosmosMsg, Response, Uint64};
+    use provwasm_mocks::mock_provenance_dependencies;
+    use provwasm_std::types::provenance::attribute::v1::{
+        Attribute, AttributeType, MsgAddAttributeRequest, QueryAttributeRequest,
+        QueryAttributeResponse, QueryAttributesRequest, QueryAttributesResponse,
+    };
 
     #[test]
     fn test_rejection_for_provided_funds() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_provenance_dependencies();
         test_instantiate(deps.as_mut());
-        let info = mock_info(DEFAULT_GROUP_MEMBER, &coins(15, "nhash"));
-        let err = approve_group_membership(deps.as_mut(), info, Uint64::new(1))
+        let info = message_info(&Addr::unchecked(DEFAULT_GROUP_MEMBER), &coins(15, "nhash"));
+        let err = approve_group_membership(deps.as_mut(), mock_env(), info, Uint64::new(1))
             .expect_err("an error should occur when the sender provides funds");
         assert!(
             matches!(err, ContractError::InvalidFundsError { .. }),
@@ -99,14 +106,24 @@ mod tests {
 
     #[test]
     fn test_rejection_for_existing_attribute() {
-        let mut deps = mock_dependencies(&[]);
-        test_instantiate(deps.as_mut());
-        let info = mock_info(DEFAULT_GROUP_MEMBER, &[]);
-        deps.querier.with_attributes(
-            DEFAULT_GROUP_MEMBER,
-            &[(DEFAULT_CONTRACT_ATTRIBUTE, "1", "int")],
+        let mut deps = mock_provenance_dependencies();
+        let info = message_info(&Addr::unchecked(DEFAULT_GROUP_MEMBER), &[]);
+        QueryAttributesRequest::mock_response(
+            &mut deps.querier,
+            QueryAttributesResponse {
+                account: DEFAULT_GROUP_MEMBER.to_string(),
+                attributes: vec![Attribute {
+                    name: DEFAULT_CONTRACT_ATTRIBUTE.to_string(),
+                    value: to_json_vec(&1u64).unwrap(),
+                    attribute_type: AttributeType::Int.into(),
+                    address: DEFAULT_GROUP_MEMBER.to_string(),
+                    expiration_date: None,
+                }],
+                pagination: None,
+            },
         );
-        let err = approve_group_membership(deps.as_mut(), info, Uint64::new(1))
+        test_instantiate(deps.as_mut());
+        let err = approve_group_membership(deps.as_mut(), mock_env(), info, Uint64::new(1))
             .expect_err("an error should occur when the member already has an attribute specifying an approval for the target group");
         match err {
             ContractError::ExecuteError { route, message } => {
@@ -128,10 +145,10 @@ mod tests {
 
     #[test]
     fn test_successful_call_for_new_attribute() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_provenance_dependencies();
         test_instantiate(deps.as_mut());
-        let info = mock_info(DEFAULT_GROUP_MEMBER, &[]);
-        let response = approve_group_membership(deps.as_mut(), info, Uint64::new(15))
+        let info = message_info(&Addr::unchecked(DEFAULT_GROUP_MEMBER), &[]);
+        let response = approve_group_membership(deps.as_mut(), mock_env(), info, Uint64::new(15))
             .expect("an approval of a new group id should be allowed");
         assert_correct_response_messages(&response, 15);
         assert_correct_response_attributes(&response, 15);
@@ -139,58 +156,66 @@ mod tests {
 
     #[test]
     fn test_successful_call_with_existing_attributes() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_provenance_dependencies();
         test_instantiate(deps.as_mut());
-        let info = mock_info(DEFAULT_GROUP_MEMBER, &[]);
-        deps.querier.with_attributes(
-            DEFAULT_GROUP_MEMBER,
-            &[
-                (DEFAULT_CONTRACT_ATTRIBUTE, "1", "int"),
-                (DEFAULT_CONTRACT_ATTRIBUTE, "2", "int"),
-            ],
+        let info = message_info(&Addr::unchecked(DEFAULT_GROUP_MEMBER), &[]);
+        QueryAttributeRequest::mock_response(
+            &mut deps.querier,
+            QueryAttributeResponse {
+                account: DEFAULT_GROUP_MEMBER.to_string(),
+                attributes: vec![
+                    Attribute {
+                        name: DEFAULT_CONTRACT_ATTRIBUTE.to_string(),
+                        value: to_json_vec(&1u64).unwrap(),
+                        attribute_type: AttributeType::Int.into(),
+                        address: DEFAULT_GROUP_MEMBER.to_string(),
+                        expiration_date: None,
+                    },
+                    Attribute {
+                        name: DEFAULT_CONTRACT_ATTRIBUTE.to_string(),
+                        value: to_json_vec(&2u64).unwrap(),
+                        attribute_type: AttributeType::Int.into(),
+                        address: DEFAULT_GROUP_MEMBER.to_string(),
+                        expiration_date: None,
+                    },
+                ],
+                pagination: None,
+            },
         );
-        let response = approve_group_membership(deps.as_mut(), info, Uint64::new(3))
+        let response = approve_group_membership(deps.as_mut(), mock_env(), info, Uint64::new(3))
             .expect("an approval of a new group id when non-matching existing ids are present should succeed");
         assert_correct_response_messages(&response, 3);
         assert_correct_response_attributes(&response, 3);
     }
 
-    fn assert_correct_response_messages(response: &Response<ProvenanceMsg>, group_id: u64) {
+    fn assert_correct_response_messages(response: &Response, group_id: u64) {
         assert_eq!(
             1,
             response.messages.len(),
             "a single message should be emitted in the response",
         );
         match &response.messages.first().unwrap().msg {
-            CosmosMsg::Custom(ProvenanceMsg {
-                params:
-                    ProvenanceMsgParams::Attribute(AddAttribute {
-                        address,
-                        name,
-                        value,
-                        value_type,
-                    }),
-                ..
-            }) => {
+            CosmosMsg::Any(AnyMsg { type_url: _, value }) => {
+                let add_attribute = MsgAddAttributeRequest::try_from(value.to_owned())
+                    .expect("expected the add attribute msg binary to deserialize correctly");
                 assert_eq!(
-                    DEFAULT_GROUP_MEMBER,
-                    address.as_str(),
+                    DEFAULT_GROUP_MEMBER, &add_attribute.account,
                     "the member should receive the attribute",
                 );
                 assert_eq!(
-                    DEFAULT_CONTRACT_ATTRIBUTE, name,
+                    DEFAULT_CONTRACT_ATTRIBUTE, &add_attribute.name,
                     "the name used should be the attribute name stored in the contract",
                 );
                 assert_eq!(
-                    from_binary::<u64>(value).expect(
+                    from_json::<u64>(&add_attribute.value).expect(
                         "the binary value in the attribute should deserialize to a u64 correctly"
                     ),
                     group_id,
                     "the group id should be properly added to the attribute",
                 );
                 assert_eq!(
-                    &AttributeValueType::Int,
-                    value_type,
+                    &AttributeType::Int,
+                    &add_attribute.attribute_type(),
                     "the value type should be properly written as Int",
                 );
             }
@@ -198,7 +223,7 @@ mod tests {
         };
     }
 
-    fn assert_correct_response_attributes(response: &Response<ProvenanceMsg>, group_id: u64) {
+    fn assert_correct_response_attributes(response: &Response, group_id: u64) {
         assert_eq!(
             4,
             response.attributes.len(),

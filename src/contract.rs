@@ -5,7 +5,6 @@ use crate::query::query_contract_state::query_contract_state;
 use crate::types::core::error::ContractError;
 use crate::types::core::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
 use cosmwasm_std::{entry_point, Binary, Deps, DepsMut, Env, MessageInfo, Response};
-use provwasm_std::{ProvenanceMsg, ProvenanceQuery};
 
 /// The entry point used when an account instantiates a stored code wasm payload of this contract on
 /// the Provenance Blockchain.
@@ -22,11 +21,11 @@ use provwasm_std::{ProvenanceMsg, ProvenanceQuery};
 /// configuration used by the contract.
 #[entry_point]
 pub fn instantiate(
-    deps: DepsMut<ProvenanceQuery>,
+    deps: DepsMut,
     env: Env,
     info: MessageInfo,
     msg: InstantiateMsg,
-) -> Result<Response<ProvenanceMsg>, ContractError> {
+) -> Result<Response, ContractError> {
     instantiate_contract(deps, env, info, msg)
 }
 
@@ -46,14 +45,14 @@ pub fn instantiate(
 /// cosmwasm framework.
 #[entry_point]
 pub fn execute(
-    deps: DepsMut<ProvenanceQuery>,
-    _env: Env,
+    deps: DepsMut,
+    env: Env,
     info: MessageInfo,
     msg: ExecuteMsg,
-) -> Result<Response<ProvenanceMsg>, ContractError> {
+) -> Result<Response, ContractError> {
     match msg {
         ExecuteMsg::ApproveGroupMembership { group_id } => {
-            approve_group_membership(deps, info, group_id)
+            approve_group_membership(deps, env, info, group_id)
         }
     }
 }
@@ -71,11 +70,7 @@ pub fn execute(
 /// * `msg` A custom query message enum defined by this contract to allow multiple different results
 /// to be determined for this route.
 #[entry_point]
-pub fn query(
-    deps: Deps<ProvenanceQuery>,
-    _env: Env,
-    msg: QueryMsg,
-) -> Result<Binary, ContractError> {
+pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> Result<Binary, ContractError> {
     match msg {
         QueryMsg::QueryContractState {} => query_contract_state(deps),
     }
@@ -94,11 +89,7 @@ pub fn query(
 /// * msg` A custom migrate message enum defined by this contract to allow multiple different
 /// results of invoking the migrate endpoint.
 #[entry_point]
-pub fn migrate(
-    deps: DepsMut<ProvenanceQuery>,
-    _env: Env,
-    msg: MigrateMsg,
-) -> Result<Response<ProvenanceMsg>, ContractError> {
+pub fn migrate(deps: DepsMut, _env: Env, msg: MigrateMsg) -> Result<Response, ContractError> {
     match msg {
         MigrateMsg::ContractUpgrade {} => contract_upgrade(deps),
     }
