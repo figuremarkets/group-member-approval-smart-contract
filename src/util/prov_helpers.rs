@@ -121,7 +121,7 @@ fn build_page_request(key: Vec<u8>) -> Option<PageRequest> {
 }
 
 /// Fetches all attributes for an address, handling paging as appropriate
-/// 
+///
 /// # Parameters
 /// * `querier` The Provenance Blockchain AttributeQuerier to use for fetching pages of attributes
 /// * `address` The address to fetch attributes on
