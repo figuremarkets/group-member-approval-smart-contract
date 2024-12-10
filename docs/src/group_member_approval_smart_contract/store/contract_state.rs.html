@@ -235,11 +235,11 @@
         DEFAULT_CONTRACT_ADMIN, DEFAULT_CONTRACT_ATTRIBUTE, DEFAULT_CONTRACT_NAME,
     };
     <span class="kw">use </span>cosmwasm_std::Addr;
-    <span class="kw">use </span>provwasm_mocks::mock_dependencies;
+    <span class="kw">use </span>provwasm_mocks::mock_provenance_dependencies;
 
     <span class="attr">#[test]
     </span><span class="kw">pub fn </span>test_set_and_get_contract_state() {
-        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
+        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies();
         set_contract_state(
             <span class="kw-2">&amp;mut </span>deps.storage,
             <span class="kw-2">&amp;</span>ContractState::new(

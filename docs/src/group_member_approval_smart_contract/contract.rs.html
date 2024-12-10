@@ -94,23 +94,13 @@
 <a href="#93" id="93">93</a>
 <a href="#94" id="94">94</a>
 <a href="#95" id="95">95</a>
-<a href="#96" id="96">96</a>
-<a href="#97" id="97">97</a>
-<a href="#98" id="98">98</a>
-<a href="#99" id="99">99</a>
-<a href="#100" id="100">100</a>
-<a href="#101" id="101">101</a>
-<a href="#102" id="102">102</a>
-<a href="#103" id="103">103</a>
-<a href="#104" id="104">104</a>
-<a href="#105" id="105">105</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::execute::approve_group_membership::approve_group_membership;
+<a href="#96" id="96">96</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::execute::approve_group_membership::approve_group_membership;
 <span class="kw">use </span><span class="kw">crate</span>::instantiate::instantiate_contract::instantiate_contract;
 <span class="kw">use </span><span class="kw">crate</span>::migrate::contract_upgrade::contract_upgrade;
 <span class="kw">use </span><span class="kw">crate</span>::query::query_contract_state::query_contract_state;
 <span class="kw">use </span><span class="kw">crate</span>::types::core::error::ContractError;
 <span class="kw">use </span><span class="kw">crate</span>::types::core::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
 <span class="kw">use </span>cosmwasm_std::{entry_point, Binary, Deps, DepsMut, Env, MessageInfo, Response};
-<span class="kw">use </span>provwasm_std::{ProvenanceMsg, ProvenanceQuery};
 
 <span class="doccomment">/// The entry point used when an account instantiates a stored code wasm payload of this contract on
 /// the Provenance Blockchain.
@@ -127,11 +117,11 @@
 /// configuration used by the contract.
 </span><span class="attr">#[entry_point]
 </span><span class="kw">pub fn </span>instantiate(
-    deps: DepsMut&lt;ProvenanceQuery&gt;,
+    deps: DepsMut,
     env: Env,
     info: MessageInfo,
     msg: InstantiateMsg,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Response&lt;ProvenanceMsg&gt;, ContractError&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;Response, ContractError&gt; {
     instantiate_contract(deps, env, info, msg)
 }
 
@@ -151,14 +141,14 @@
 /// cosmwasm framework.
 </span><span class="attr">#[entry_point]
 </span><span class="kw">pub fn </span>execute(
-    deps: DepsMut&lt;ProvenanceQuery&gt;,
-    _env: Env,
+    deps: DepsMut,
+    env: Env,
     info: MessageInfo,
     msg: ExecuteMsg,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Response&lt;ProvenanceMsg&gt;, ContractError&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;Response, ContractError&gt; {
     <span class="kw">match </span>msg {
         ExecuteMsg::ApproveGroupMembership { group_id } =&gt; {
-            approve_group_membership(deps, info, group_id)
+            approve_group_membership(deps, env, info, group_id)
         }
     }
 }
@@ -176,11 +166,7 @@
 /// * `msg` A custom query message enum defined by this contract to allow multiple different results
 /// to be determined for this route.
 </span><span class="attr">#[entry_point]
-</span><span class="kw">pub fn </span>query(
-    deps: Deps&lt;ProvenanceQuery&gt;,
-    _env: Env,
-    msg: QueryMsg,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Binary, ContractError&gt; {
+</span><span class="kw">pub fn </span>query(deps: Deps, _env: Env, msg: QueryMsg) -&gt; <span class="prelude-ty">Result</span>&lt;Binary, ContractError&gt; {
     <span class="kw">match </span>msg {
         QueryMsg::QueryContractState {} =&gt; query_contract_state(deps),
     }
@@ -199,11 +185,7 @@
 /// * msg` A custom migrate message enum defined by this contract to allow multiple different
 /// results of invoking the migrate endpoint.
 </span><span class="attr">#[entry_point]
-</span><span class="kw">pub fn </span>migrate(
-    deps: DepsMut&lt;ProvenanceQuery&gt;,
-    _env: Env,
-    msg: MigrateMsg,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Response&lt;ProvenanceMsg&gt;, ContractError&gt; {
+</span><span class="kw">pub fn </span>migrate(deps: DepsMut, _env: Env, msg: MigrateMsg) -&gt; <span class="prelude-ty">Result</span>&lt;Response, ContractError&gt; {
     <span class="kw">match </span>msg {
         MigrateMsg::ContractUpgrade {} =&gt; contract_upgrade(deps),
     }

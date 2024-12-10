@@ -54,11 +54,9 @@
 <a href="#53" id="53">53</a>
 <a href="#54" id="54">54</a>
 <a href="#55" id="55">55</a>
-<a href="#56" id="56">56</a>
-<a href="#57" id="57">57</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::store::contract_state::get_contract_state;
+<a href="#56" id="56">56</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::store::contract_state::get_contract_state;
 <span class="kw">use </span><span class="kw">crate</span>::types::core::error::ContractError;
-<span class="kw">use </span>cosmwasm_std::{to_binary, Binary, Deps};
-<span class="kw">use </span>provwasm_std::ProvenanceQuery;
+<span class="kw">use </span>cosmwasm_std::{to_json_binary, Binary, Deps};
 <span class="kw">use </span>result_extensions::ResultExtensions;
 
 <span class="doccomment">/// Fetches the current values within the [ContractState](crate::store::contract_state::ContractState).
@@ -67,8 +65,8 @@
 ///
 /// * `deps` A dependencies object provided by the cosmwasm framework.  Allows access to useful
 /// resources like contract internal storage and a querier to retrieve blockchain objects.
-</span><span class="kw">pub fn </span>query_contract_state(deps: Deps&lt;ProvenanceQuery&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Binary, ContractError&gt; {
-    to_binary(<span class="kw-2">&amp;</span>get_contract_state(deps.storage)<span class="question-mark">?</span>)<span class="question-mark">?</span>.to_ok()
+</span><span class="kw">pub fn </span>query_contract_state(deps: Deps) -&gt; <span class="prelude-ty">Result</span>&lt;Binary, ContractError&gt; {
+    to_json_binary(<span class="kw-2">&amp;</span>get_contract_state(deps.storage)<span class="question-mark">?</span>)<span class="question-mark">?</span>.to_ok()
 }
 
 <span class="attr">#[cfg(test)]
@@ -79,12 +77,12 @@
         DEFAULT_CONTRACT_ADMIN, DEFAULT_CONTRACT_ATTRIBUTE, DEFAULT_CONTRACT_NAME,
     };
     <span class="kw">use </span><span class="kw">crate</span>::types::core::error::ContractError;
-    <span class="kw">use </span>cosmwasm_std::{from_binary, Addr};
-    <span class="kw">use </span>provwasm_mocks::mock_dependencies;
+    <span class="kw">use </span>cosmwasm_std::{from_json, Addr};
+    <span class="kw">use </span>provwasm_mocks::mock_provenance_dependencies;
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_query_when_missing_contract_state() {
-        <span class="kw">let </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
+        <span class="kw">let </span>deps = mock_provenance_dependencies();
         <span class="kw">let </span>result = query_contract_state(deps.as_ref());
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(result, <span class="prelude-val">Err</span>(ContractError::StorageError { .. })),
@@ -94,7 +92,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_query_when_contract_state_available() {
-        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
+        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies();
         <span class="kw">let </span>contract_state = ContractState::new(
             Addr::unchecked(DEFAULT_CONTRACT_ADMIN),
             DEFAULT_CONTRACT_ATTRIBUTE,
@@ -104,7 +102,7 @@
             .expect(<span class="string">"contract state should be successfully stored"</span>);
         <span class="kw">let </span>result_binary = query_contract_state(deps.as_ref())
             .expect(<span class="string">"contract state should be successfully derived"</span>);
-        <span class="kw">let </span>result_contract_state = from_binary::&lt;ContractState&gt;(<span class="kw-2">&amp;</span>result_binary)
+        <span class="kw">let </span>result_contract_state = from_json::&lt;ContractState&gt;(<span class="kw-2">&amp;</span>result_binary)
             .expect(<span class="string">"the contract state should successfully deserialize from binary"</span>);
         <span class="macro">assert_eq!</span>(
             contract_state, result_contract_state,
