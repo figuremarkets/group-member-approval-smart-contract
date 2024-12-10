@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Toolchain
         uses: actions-rs/toolchain@v1
@@ -35,7 +35,7 @@ jobs:
         run: make test
 
       - name: Set Up JDK 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 11
           distribution: adopt
