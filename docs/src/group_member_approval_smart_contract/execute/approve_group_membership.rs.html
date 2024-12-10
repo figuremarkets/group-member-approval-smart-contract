@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/execute/approve_group_membership.rs`."><title>approve_group_membership.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c5d6553a23f1e5a6.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="group_member_approval_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.81.0 (eeb90cda1 2024-09-04)" data-channel="1.81.0" data-search-js="search-d234aafac6c221dd.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-d2fab2bf619172d3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/execute/approve_group_membership.rs`."><title>approve_group_membership.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="group_member_approval_smart_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">group_member_approval_smart_contract/execute/</div>approve_group_membership.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -225,39 +226,13 @@
 <a href="#225" id="225">225</a>
 <a href="#226" id="226">226</a>
 <a href="#227" id="227">227</a>
-<a href="#228" id="228">228</a>
-<a href="#229" id="229">229</a>
-<a href="#230" id="230">230</a>
-<a href="#231" id="231">231</a>
-<a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a>
-<a href="#234" id="234">234</a>
-<a href="#235" id="235">235</a>
-<a href="#236" id="236">236</a>
-<a href="#237" id="237">237</a>
-<a href="#238" id="238">238</a>
-<a href="#239" id="239">239</a>
-<a href="#240" id="240">240</a>
-<a href="#241" id="241">241</a>
-<a href="#242" id="242">242</a>
-<a href="#243" id="243">243</a>
-<a href="#244" id="244">244</a>
-<a href="#245" id="245">245</a>
-<a href="#246" id="246">246</a>
-<a href="#247" id="247">247</a>
-<a href="#248" id="248">248</a>
-<a href="#249" id="249">249</a>
-<a href="#250" id="250">250</a>
-<a href="#251" id="251">251</a>
-<a href="#252" id="252">252</a>
-<a href="#253" id="253">253</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::types::core::error::ContractError;
-<span class="kw">use </span><span class="kw">crate</span>::util::prov_helpers::get_group_id_attribute_values_paginated;
+<a href="#228" id="228">228</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::store::contract_state::get_contract_state;
+<span class="kw">use </span><span class="kw">crate</span>::types::core::error::ContractError;
+<span class="kw">use </span><span class="kw">crate</span>::util::prov_helpers::get_group_id_attribute_values;
 <span class="kw">use </span><span class="kw">crate</span>::util::route_helpers::check_funds_are_empty;
-<span class="kw">use crate</span>::{store::contract_state::get_contract_state, util::prov_helpers::get_all_attributes};
-<span class="kw">use </span>cosmwasm_std::{to_json_vec, DepsMut, Env, MessageInfo, Response, Uint64};
-<span class="kw">use </span>provwasm_std::types::provenance::attribute::v1::{
-    AttributeQuerier, AttributeType, MsgAddAttributeRequest,
+<span class="kw">use </span>cosmwasm_std::{to_binary, DepsMut, MessageInfo, Response, Uint64};
+<span class="kw">use </span>provwasm_std::{
+    add_attribute, AttributeValueType, ProvenanceMsg, ProvenanceQuerier, ProvenanceQuery,
 };
 <span class="kw">use </span>result_extensions::ResultExtensions;
 
@@ -281,22 +256,19 @@
 /// * `group_id` The unique identifier of a given group for which the signing account consents to
 /// membership.
 </span><span class="kw">pub fn </span>approve_group_membership(
-    deps: DepsMut,
-    env: Env,
+    deps: DepsMut&lt;ProvenanceQuery&gt;,
     info: MessageInfo,
     group_id: Uint64,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Response, ContractError&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;Response&lt;ProvenanceMsg&gt;, ContractError&gt; {
     <span class="comment">// Verify that no coin was sent to start this execution route.  The only charge incurred should
     // be a new attribute write
     </span>check_funds_are_empty(<span class="kw-2">&amp;</span>info)<span class="question-mark">?</span>;
     <span class="kw">let </span>attribute_name = get_contract_state(deps.storage)<span class="question-mark">?</span>.attribute_name;
-    <span class="kw">let </span>existing_group_ids = get_all_attributes(
-        AttributeQuerier::new(<span class="kw-2">&amp;</span>deps.querier),
-        <span class="kw-2">&amp;</span>info.sender.clone().into_string(),
-    )
-    .ok()
-    .map(|attributes| get_group_id_attribute_values_paginated(attributes, <span class="kw-2">&amp;</span>attribute_name))
-    .unwrap_or_default();
+    <span class="kw">let </span>existing_group_ids = ProvenanceQuerier::new(<span class="kw-2">&amp;</span>deps.querier)
+        .get_attributes(info.sender.clone(), <span class="prelude-val">Some</span>(attribute_name.clone()))
+        .ok()
+        .map(|attributes| get_group_id_attribute_values(<span class="kw-2">&amp;</span>attributes, <span class="kw-2">&amp;</span>attribute_name))
+        .unwrap_or_default();
     <span class="comment">// First, verify that this member has not yet approved itself for this group.  Duplicate ids
     // would be a waste of hash and needlessly increase data storage on chain
     </span><span class="kw">if </span>existing_group_ids
@@ -314,14 +286,12 @@
         .to_err();
     }
     Response::new()
-        .add_message(MsgAddAttributeRequest {
-            name: attribute_name.clone(),
-            value: to_json_vec(<span class="kw-2">&amp;</span>group_id.u64())<span class="question-mark">?</span>,
-            attribute_type: AttributeType::Int.into(),
-            account: info.sender.clone().into_string(),
-            owner: env.contract.address.into_string(),
-            expiration_date: <span class="prelude-val">None</span>,
-        })
+        .add_message(add_attribute(
+            info.sender.clone(),
+            <span class="kw-2">&amp;</span>attribute_name,
+            to_binary(<span class="kw-2">&amp;</span>group_id.u64())<span class="question-mark">?</span>,
+            AttributeValueType::Int,
+        )<span class="question-mark">?</span>)
         .add_attribute(<span class="string">"action"</span>, <span class="string">"approve_group_membership"</span>)
         .add_attribute(<span class="string">"account_address"</span>, info.sender.as_str())
         .add_attribute(<span class="string">"attribute_name"</span>, <span class="kw-2">&amp;</span>attribute_name)
@@ -336,20 +306,18 @@
     <span class="kw">use </span><span class="kw">crate</span>::test::test_helpers::single_attribute_for_key;
     <span class="kw">use </span><span class="kw">crate</span>::test::test_instantiate::test_instantiate;
     <span class="kw">use </span><span class="kw">crate</span>::types::core::error::ContractError;
-    <span class="kw">use </span>cosmwasm_std::testing::{message_info, mock_env};
-    <span class="kw">use </span>cosmwasm_std::{coins, from_json, to_json_vec, Addr, AnyMsg, CosmosMsg, Response, Uint64};
-    <span class="kw">use </span>provwasm_mocks::mock_provenance_dependencies;
-    <span class="kw">use </span>provwasm_std::types::provenance::attribute::v1::{
-        Attribute, AttributeType, MsgAddAttributeRequest, QueryAttributeRequest,
-        QueryAttributeResponse, QueryAttributesRequest, QueryAttributesResponse,
-    };
+    <span class="kw">use </span>cosmwasm_std::testing::mock_info;
+    <span class="kw">use </span>cosmwasm_std::{coins, from_binary, CosmosMsg, Response, Uint64};
+    <span class="kw">use </span>provwasm_mocks::mock_dependencies;
+    <span class="kw">use </span>provwasm_std::AttributeMsgParams::AddAttribute;
+    <span class="kw">use </span>provwasm_std::{AttributeValueType, ProvenanceMsg, ProvenanceMsgParams};
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_rejection_for_provided_funds() {
-        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies();
+        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
         test_instantiate(deps.as_mut());
-        <span class="kw">let </span>info = message_info(<span class="kw-2">&amp;</span>Addr::unchecked(DEFAULT_GROUP_MEMBER), <span class="kw-2">&amp;</span>coins(<span class="number">15</span>, <span class="string">"nhash"</span>));
-        <span class="kw">let </span>err = approve_group_membership(deps.as_mut(), mock_env(), info, Uint64::new(<span class="number">1</span>))
+        <span class="kw">let </span>info = mock_info(DEFAULT_GROUP_MEMBER, <span class="kw-2">&amp;</span>coins(<span class="number">15</span>, <span class="string">"nhash"</span>));
+        <span class="kw">let </span>err = approve_group_membership(deps.as_mut(), info, Uint64::new(<span class="number">1</span>))
             .expect_err(<span class="string">"an error should occur when the sender provides funds"</span>);
         <span class="macro">assert!</span>(
             <span class="macro">matches!</span>(err, ContractError::InvalidFundsError { .. }),
@@ -359,24 +327,14 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_rejection_for_existing_attribute() {
-        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies();
-        <span class="kw">let </span>info = message_info(<span class="kw-2">&amp;</span>Addr::unchecked(DEFAULT_GROUP_MEMBER), <span class="kw-2">&amp;</span>[]);
-        QueryAttributesRequest::mock_response(
-            <span class="kw-2">&amp;mut </span>deps.querier,
-            QueryAttributesResponse {
-                account: DEFAULT_GROUP_MEMBER.to_string(),
-                attributes: <span class="macro">vec!</span>[Attribute {
-                    name: DEFAULT_CONTRACT_ATTRIBUTE.to_string(),
-                    value: to_json_vec(<span class="kw-2">&amp;</span><span class="number">1u64</span>).unwrap(),
-                    attribute_type: AttributeType::Int.into(),
-                    address: DEFAULT_GROUP_MEMBER.to_string(),
-                    expiration_date: <span class="prelude-val">None</span>,
-                }],
-                pagination: <span class="prelude-val">None</span>,
-            },
-        );
+        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
         test_instantiate(deps.as_mut());
-        <span class="kw">let </span>err = approve_group_membership(deps.as_mut(), mock_env(), info, Uint64::new(<span class="number">1</span>))
+        <span class="kw">let </span>info = mock_info(DEFAULT_GROUP_MEMBER, <span class="kw-2">&amp;</span>[]);
+        deps.querier.with_attributes(
+            DEFAULT_GROUP_MEMBER,
+            <span class="kw-2">&amp;</span>[(DEFAULT_CONTRACT_ATTRIBUTE, <span class="string">"1"</span>, <span class="string">"int"</span>)],
+        );
+        <span class="kw">let </span>err = approve_group_membership(deps.as_mut(), info, Uint64::new(<span class="number">1</span>))
             .expect_err(<span class="string">"an error should occur when the member already has an attribute specifying an approval for the target group"</span>);
         <span class="kw">match </span>err {
             ContractError::ExecuteError { route, message } =&gt; {
@@ -398,10 +356,10 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_successful_call_for_new_attribute() {
-        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies();
+        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
         test_instantiate(deps.as_mut());
-        <span class="kw">let </span>info = message_info(<span class="kw-2">&amp;</span>Addr::unchecked(DEFAULT_GROUP_MEMBER), <span class="kw-2">&amp;</span>[]);
-        <span class="kw">let </span>response = approve_group_membership(deps.as_mut(), mock_env(), info, Uint64::new(<span class="number">15</span>))
+        <span class="kw">let </span>info = mock_info(DEFAULT_GROUP_MEMBER, <span class="kw-2">&amp;</span>[]);
+        <span class="kw">let </span>response = approve_group_membership(deps.as_mut(), info, Uint64::new(<span class="number">15</span>))
             .expect(<span class="string">"an approval of a new group id should be allowed"</span>);
         assert_correct_response_messages(<span class="kw-2">&amp;</span>response, <span class="number">15</span>);
         assert_correct_response_attributes(<span class="kw-2">&amp;</span>response, <span class="number">15</span>);
@@ -409,66 +367,58 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_successful_call_with_existing_attributes() {
-        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_provenance_dependencies();
+        <span class="kw">let </span><span class="kw-2">mut </span>deps = mock_dependencies(<span class="kw-2">&amp;</span>[]);
         test_instantiate(deps.as_mut());
-        <span class="kw">let </span>info = message_info(<span class="kw-2">&amp;</span>Addr::unchecked(DEFAULT_GROUP_MEMBER), <span class="kw-2">&amp;</span>[]);
-        QueryAttributeRequest::mock_response(
-            <span class="kw-2">&amp;mut </span>deps.querier,
-            QueryAttributeResponse {
-                account: DEFAULT_GROUP_MEMBER.to_string(),
-                attributes: <span class="macro">vec!</span>[
-                    Attribute {
-                        name: DEFAULT_CONTRACT_ATTRIBUTE.to_string(),
-                        value: to_json_vec(<span class="kw-2">&amp;</span><span class="number">1u64</span>).unwrap(),
-                        attribute_type: AttributeType::Int.into(),
-                        address: DEFAULT_GROUP_MEMBER.to_string(),
-                        expiration_date: <span class="prelude-val">None</span>,
-                    },
-                    Attribute {
-                        name: DEFAULT_CONTRACT_ATTRIBUTE.to_string(),
-                        value: to_json_vec(<span class="kw-2">&amp;</span><span class="number">2u64</span>).unwrap(),
-                        attribute_type: AttributeType::Int.into(),
-                        address: DEFAULT_GROUP_MEMBER.to_string(),
-                        expiration_date: <span class="prelude-val">None</span>,
-                    },
-                ],
-                pagination: <span class="prelude-val">None</span>,
-            },
+        <span class="kw">let </span>info = mock_info(DEFAULT_GROUP_MEMBER, <span class="kw-2">&amp;</span>[]);
+        deps.querier.with_attributes(
+            DEFAULT_GROUP_MEMBER,
+            <span class="kw-2">&amp;</span>[
+                (DEFAULT_CONTRACT_ATTRIBUTE, <span class="string">"1"</span>, <span class="string">"int"</span>),
+                (DEFAULT_CONTRACT_ATTRIBUTE, <span class="string">"2"</span>, <span class="string">"int"</span>),
+            ],
         );
-        <span class="kw">let </span>response = approve_group_membership(deps.as_mut(), mock_env(), info, Uint64::new(<span class="number">3</span>))
+        <span class="kw">let </span>response = approve_group_membership(deps.as_mut(), info, Uint64::new(<span class="number">3</span>))
             .expect(<span class="string">"an approval of a new group id when non-matching existing ids are present should succeed"</span>);
         assert_correct_response_messages(<span class="kw-2">&amp;</span>response, <span class="number">3</span>);
         assert_correct_response_attributes(<span class="kw-2">&amp;</span>response, <span class="number">3</span>);
     }
 
-    <span class="kw">fn </span>assert_correct_response_messages(response: <span class="kw-2">&amp;</span>Response, group_id: u64) {
+    <span class="kw">fn </span>assert_correct_response_messages(response: <span class="kw-2">&amp;</span>Response&lt;ProvenanceMsg&gt;, group_id: u64) {
         <span class="macro">assert_eq!</span>(
             <span class="number">1</span>,
             response.messages.len(),
             <span class="string">"a single message should be emitted in the response"</span>,
         );
         <span class="kw">match </span><span class="kw-2">&amp;</span>response.messages.first().unwrap().msg {
-            CosmosMsg::Any(AnyMsg { type_url: <span class="kw">_</span>, value }) =&gt; {
-                <span class="kw">let </span>add_attribute = MsgAddAttributeRequest::try_from(value.to_owned())
-                    .expect(<span class="string">"expected the add attribute msg binary to deserialize correctly"</span>);
+            CosmosMsg::Custom(ProvenanceMsg {
+                params:
+                    ProvenanceMsgParams::Attribute(AddAttribute {
+                        address,
+                        name,
+                        value,
+                        value_type,
+                    }),
+                ..
+            }) =&gt; {
                 <span class="macro">assert_eq!</span>(
-                    DEFAULT_GROUP_MEMBER, <span class="kw-2">&amp;</span>add_attribute.account,
+                    DEFAULT_GROUP_MEMBER,
+                    address.as_str(),
                     <span class="string">"the member should receive the attribute"</span>,
                 );
                 <span class="macro">assert_eq!</span>(
-                    DEFAULT_CONTRACT_ATTRIBUTE, <span class="kw-2">&amp;</span>add_attribute.name,
+                    DEFAULT_CONTRACT_ATTRIBUTE, name,
                     <span class="string">"the name used should be the attribute name stored in the contract"</span>,
                 );
                 <span class="macro">assert_eq!</span>(
-                    from_json::&lt;u64&gt;(<span class="kw-2">&amp;</span>add_attribute.value).expect(
+                    from_binary::&lt;u64&gt;(value).expect(
                         <span class="string">"the binary value in the attribute should deserialize to a u64 correctly"
                     </span>),
                     group_id,
                     <span class="string">"the group id should be properly added to the attribute"</span>,
                 );
                 <span class="macro">assert_eq!</span>(
-                    <span class="kw-2">&amp;</span>AttributeType::Int,
-                    <span class="kw-2">&amp;</span>add_attribute.attribute_type(),
+                    <span class="kw-2">&amp;</span>AttributeValueType::Int,
+                    value_type,
                     <span class="string">"the value type should be properly written as Int"</span>,
                 );
             }
@@ -476,7 +426,7 @@
         };
     }
 
-    <span class="kw">fn </span>assert_correct_response_attributes(response: <span class="kw-2">&amp;</span>Response, group_id: u64) {
+    <span class="kw">fn </span>assert_correct_response_attributes(response: <span class="kw-2">&amp;</span>Response&lt;ProvenanceMsg&gt;, group_id: u64) {
         <span class="macro">assert_eq!</span>(
             <span class="number">4</span>,
             response.attributes.len(),

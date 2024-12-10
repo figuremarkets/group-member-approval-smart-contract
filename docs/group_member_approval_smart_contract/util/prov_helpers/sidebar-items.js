@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["get_all_attributes","get_group_id_attribute_values","get_group_id_attribute_values_paginated","msg_bind_name"]};
+window.SIDEBAR_ITEMS = {"fn":["get_group_id_attribute_values"]};
