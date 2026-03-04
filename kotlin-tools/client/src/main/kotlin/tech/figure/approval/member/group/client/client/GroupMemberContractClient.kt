@@ -5,8 +5,8 @@ import cosmos.tx.v1beta1.ServiceOuterClass.BroadcastMode
 import cosmos.tx.v1beta1.ServiceOuterClass.BroadcastTxResponse
 import cosmwasm.wasm.v1.QueryOuterClass.QuerySmartContractStateRequest
 import cosmwasm.wasm.v1.Tx.MsgExecuteContract
+import io.provenance.client.grpc.AbstractPbClient
 import io.provenance.client.grpc.BaseReqSigner
-import io.provenance.client.grpc.PbClient
 import io.provenance.client.grpc.Signer
 import io.provenance.client.protobuf.extensions.queryWasm
 import io.provenance.client.protobuf.extensions.toAny
@@ -30,7 +30,7 @@ import tendermint.abci.Types.Event
  * exposed by each execution and query route on the contract.
  */
 open class GroupMemberContractClient(
-    protected val pbClient: PbClient,
+    protected val pbClient: AbstractPbClient<*>,
     private val addressResolver: GroupMemberContractAddressResolver,
     protected val objectMapper: ObjectMapper = GroupMemberApprovalOMUtil.getObjectMapper(),
 ) {
